@@ -1,5 +1,7 @@
 package ltd.highsoft.hkeeper;
 
+import io.micrometer.core.instrument.util.StringUtils;
+
 import java.time.Instant;
 
 public class AggregateState {
@@ -12,6 +14,31 @@ public class AggregateState {
         this.id = id;
         this.state = state;
         this.timestamp = timestamp;
+        validate();
+    }
+
+    private void validate() {
+        validateId();
+        validateState();
+        validateTimestamp();
+    }
+
+    private void validateId() {
+        if (StringUtils.isBlank(id)) {
+            throw new MalformedDataException("Aggregate ID is missing!");
+        }
+    }
+
+    private void validateState() {
+        if (StringUtils.isBlank(state)) {
+            throw new MalformedDataException("Aggregate state is missing!");
+        }
+    }
+
+    private void validateTimestamp() {
+        if (timestamp == null) {
+            throw new MalformedDataException("Aggregate timestamp is missing!");
+        }
     }
 
     public String id() {
