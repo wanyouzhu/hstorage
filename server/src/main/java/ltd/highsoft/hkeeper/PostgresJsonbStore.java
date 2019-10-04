@@ -37,7 +37,7 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public <T> T load(String id, Class<T> clazz) {
-        EntityState state = loadState(id, clazz);
+        AggregateState state = loadState(id, clazz);
         try {
             return mapper.readValue(state.content(), clazz);
         } catch (IOException e) {
@@ -45,7 +45,7 @@ public class PostgresJsonbStore extends Store {
         }
     }
 
-    private EntityState loadState(String id, Class<?> clazz) {
+    private AggregateState loadState(String id, Class<?> clazz) {
         try {
             String sql = "select id, state, timestamp from entities where id = ?";
             return jdbcTemplate.queryForObject(sql, new AggregateStateMapper(), id);
@@ -54,8 +54,8 @@ public class PostgresJsonbStore extends Store {
         }
     }
 
-    private EntityState createEntityState(Object entity) {
-        return new EntityState(extractId(entity), asContent(entity), timeService.now());
+    private AggregateState createEntityState(Object entity) {
+        return new AggregateState(extractId(entity), asContent(entity), timeService.now());
     }
 
     private String extractId(Object entity) {
@@ -74,7 +74,7 @@ public class PostgresJsonbStore extends Store {
         }
     }
 
-    private void saveSate(EntityState state) {
+    private void saveSate(AggregateState state) {
         String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
         Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp())};
         int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP};

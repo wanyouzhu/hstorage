@@ -2,15 +2,15 @@ package ltd.highsoft.hkeeper;
 
 import java.time.Instant;
 
-public class EntityState {
+public class AggregateState {
 
     private final String id;
-    private final String content;
+    private final String state;
     private final Instant timestamp;
 
-    public EntityState(String id, String content, Instant timestamp) {
+    public AggregateState(String id, String state, Instant timestamp) {
         this.id = id;
-        this.content = content;
+        this.state = state;
         this.timestamp = timestamp;
     }
 
@@ -19,7 +19,7 @@ public class EntityState {
     }
 
     public String content() {
-        return content;
+        return state;
     }
 
     public Instant timestamp() {
