@@ -5,6 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,12 +31,15 @@ class PostgresJsonbStoreTest {
 
     @Test
     void should_save_entity_state_into_database() {
-        Store store = new PostgresJsonbStore(jdbcTemplate);
+        TimeService timeService = new FixedTimeService(Instant.now());
+        Store store = new PostgresJsonbStore(jdbcTemplate, timeService);
         Entity entity = new Entity("0001", "Van");
         store.save(entity);
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("select * from entities");
         assertThat(rows.size()).isEqualTo(1);
         assertThat(rows.get(0).get("id")).isEqualTo("0001");
+        assertThat(rows.get(0).get("state").toString()).isEqualTo("{\"id\": \"0001\", \"name\": \"Van\"}");
+        assertThat(rows.get(0).get("timestamp")).isEqualTo(Timestamp.from(timeService.now()));
     }
 
     @SuppressWarnings({"unused", "FieldCanBeLocal"})

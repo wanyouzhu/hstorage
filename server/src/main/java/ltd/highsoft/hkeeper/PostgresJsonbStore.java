@@ -8,15 +8,16 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.sql.Types;
-import java.time.Instant;
 
 public class PostgresJsonbStore extends Store {
     private final JdbcOperations jdbcTemplate;
     private final ObjectMapper mapper;
+    private final TimeService timeService;
 
-    PostgresJsonbStore(JdbcOperations jdbcTemplate) {
+    PostgresJsonbStore(JdbcOperations jdbcTemplate, TimeService timeService) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapper = createMapper();
+        this.timeService = timeService;
     }
 
     private ObjectMapper createMapper() {
@@ -27,7 +28,11 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public void save(Object entity) {
-        saveSate(new EntityState(extractId(entity), asContent(entity), Instant.now()));
+        saveSate(createEntityState(entity));
+    }
+
+    private EntityState createEntityState(Object entity) {
+        return new EntityState(extractId(entity), asContent(entity), timeService.now());
     }
 
     private Object extractId(Object entity) {
