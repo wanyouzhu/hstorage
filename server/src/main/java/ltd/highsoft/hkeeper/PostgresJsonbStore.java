@@ -31,8 +31,8 @@ public class PostgresJsonbStore extends Store {
     }
 
     @Override
-    public void save(Object entity) {
-        saveSate(createEntityState(entity));
+    public void save(Object aggregate) {
+        saveSate(createAggregateState(aggregate));
     }
 
     @Override
@@ -54,21 +54,21 @@ public class PostgresJsonbStore extends Store {
         }
     }
 
-    private AggregateState createEntityState(Object entity) {
-        return new AggregateState(extractId(entity), asContent(entity), timeService.now());
+    private AggregateState createAggregateState(Object aggregate) {
+        return new AggregateState(extractId(aggregate), asStateContent(aggregate), timeService.now());
     }
 
-    private String extractId(Object entity) {
-        Field field = ReflectionUtils.findField(entity.getClass(), "id", String.class);
+    private String extractId(Object aggregate) {
+        Field field = ReflectionUtils.findField(aggregate.getClass(), "id", String.class);
         if (field == null)
-            throw new MappingException("Missing 'id' field in type '" + entity.getClass().getName() + "'!");
+            throw new MappingException("Missing 'id' field in type '" + aggregate.getClass().getName() + "'!");
         ReflectionUtils.makeAccessible(field);
-        return (String) ReflectionUtils.getField(field, entity);
+        return (String) ReflectionUtils.getField(field, aggregate);
     }
 
-    private String asContent(Object entity) {
+    private String asStateContent(Object aggregate) {
         try {
-            return mapper.writeValueAsString(entity);
+            return mapper.writeValueAsString(aggregate);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Mapping error: ", e);
         }

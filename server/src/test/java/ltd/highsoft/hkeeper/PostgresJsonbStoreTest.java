@@ -27,9 +27,9 @@ class PostgresJsonbStoreTest {
     }
 
     @Test
-    void should_save_entity_state_into_database() {
-        Entity entity = new Entity("0001", "Van");
-        store.save(entity);
+    void should_save_aggregate_state_into_database_correctly() {
+        Aggregate aggregate = new Aggregate("0001", "Van");
+        store.save(aggregate);
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("select * from entities");
         assertThat(rows.size()).isEqualTo(1);
         assertThat(rows.get(0).get("id")).isEqualTo("0001");
@@ -38,26 +38,26 @@ class PostgresJsonbStoreTest {
     }
 
     @Test
-    void should_reject_entities_without_id_field() {
-        Object entity = new TypeWithoutIdField("Van");
-        AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(entity));
+    void should_reject_aggregates_without_id_field() {
+        Object object = new TypeWithoutIdField("Van");
+        AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(object));
         exception.isInstanceOf(MappingException.class);
         exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.hkeeper.TypeWithoutIdField'!");
     }
 
     @Test
-    void should_load_entity_state_from_database() {
-        Entity entity = new Entity("0001", "Van");
-        store.save(entity);
-        Entity loaded = store.load("0001", Entity.class);
-        assertThat(loaded).isEqualToComparingFieldByField(entity);
+    void should_load_aggregate_state_from_database_correctly() {
+        Aggregate aggregate = new Aggregate("0001", "Van");
+        store.save(aggregate);
+        Aggregate loaded = store.load("0001", Aggregate.class);
+        assertThat(loaded).isEqualToComparingFieldByField(aggregate);
     }
 
     @Test
     void should_throw_aggregate_not_found_exception_while_aggregate_not_found_during_loading() {
-        Throwable thrown = catchThrowable(() -> store.load("non-existing-aggregate", Entity.class));
+        Throwable thrown = catchThrowable(() -> store.load("non-existing-aggregate", Aggregate.class));
         assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);
-        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.hkeeper.Entity' does not exist!");
+        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.hkeeper.Aggregate' does not exist!");
     }
 
     private void recreateCollectionTable() {
