@@ -45,6 +45,14 @@ class PostgresJsonbStoreTest {
         exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.hkeeper.TypeWithoutIdField'!");
     }
 
+    @Test
+    void should_load_entity_state_from_database() {
+        Entity entity = new Entity("0001", "Van");
+        store.save(entity);
+        Entity loaded = store.load("0001", Entity.class);
+        assertThat(loaded).isEqualToComparingFieldByField(entity);
+    }
+
     private void recreateCollectionTable() {
         jdbcTemplate.execute("drop table if exists entities");
         jdbcTemplate.execute(

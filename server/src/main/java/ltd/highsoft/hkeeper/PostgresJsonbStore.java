@@ -3,11 +3,14 @@ package ltd.highsoft.hkeeper;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.jdbc.core.*;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.sql.Types;
+import java.sql.*;
+import java.time.Instant;
 
 public class PostgresJsonbStore extends Store {
     private final JdbcOperations jdbcTemplate;
@@ -22,6 +25,7 @@ public class PostgresJsonbStore extends Store {
 
     private ObjectMapper createMapper() {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new ParameterNamesModule());
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         return mapper;
     }
@@ -31,13 +35,37 @@ public class PostgresJsonbStore extends Store {
         saveSate(createEntityState(entity));
     }
 
+    @Override
+    public <T> T load(String id, Class<T> clazz) {
+        EntityState state = loadState(id);
+        try {
+            return mapper.readValue(state.content(), clazz);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private EntityState loadState(String id) {
+        String sql = "select id, state, timestamp from entities where id = ?";
+        return jdbcTemplate.execute(sql, (PreparedStatementCallback<EntityState>) ps -> {
+            ps.setString(1, id);
+            ps.execute();
+            ResultSet resultSet = ps.getResultSet();
+            resultSet.next();
+            String state = resultSet.getString("state");
+            Instant timestamp = resultSet.getTimestamp("timestamp").toInstant();
+            return new EntityState(id, state, timestamp);
+        });
+    }
+
     private EntityState createEntityState(Object entity) {
         return new EntityState(extractId(entity), asContent(entity), timeService.now());
     }
 
     private Object extractId(Object entity) {
         Field field = ReflectionUtils.findField(entity.getClass(), "id");
-        if (field == null) throw new MappingException("Missing 'id' field in type '" + entity.getClass().getName() + "'!");
+        if (field == null)
+            throw new MappingException("Missing 'id' field in type '" + entity.getClass().getName() + "'!");
         ReflectionUtils.makeAccessible(field);
         return ReflectionUtils.getField(field, entity);
     }
