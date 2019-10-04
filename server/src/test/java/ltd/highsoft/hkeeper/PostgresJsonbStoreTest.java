@@ -26,18 +26,6 @@ class PostgresJsonbStoreTest {
         recreateCollectionTable();
     }
 
-    private void recreateCollectionTable() {
-        jdbcTemplate.execute("drop table if exists entities");
-        jdbcTemplate.execute(
-            "create table entities\n" +
-                "(\n" +
-                "    id        varchar(50) primary key,\n" +
-                "    state     jsonb       not null,\n" +
-                "    timestamp timestamptz not null\n" +
-                ")"
-        );
-    }
-
     @Test
     void should_save_entity_state_into_database() {
         Entity entity = new Entity("0001", "Van");
@@ -54,26 +42,39 @@ class PostgresJsonbStoreTest {
         Object entity = new TypeWithoutIdField("Van");
         AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(entity));
         exception.isInstanceOf(MappingException.class);
-        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.hkeeper.PostgresJsonbStoreTest$TypeWithoutIdField'!");
+        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.hkeeper.TypeWithoutIdField'!");
     }
 
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private static class Entity {
-        private String id;
-        private String name;
-
-        Entity(String id, String name) {
-            this.id = id;
-            this.name = name;
-        }
+    private void recreateCollectionTable() {
+        jdbcTemplate.execute("drop table if exists entities");
+        jdbcTemplate.execute(
+            "create table entities\n" +
+                "(\n" +
+                "    id        varchar(50) primary key,\n" +
+                "    state     jsonb       not null,\n" +
+                "    timestamp timestamptz not null\n" +
+                ")"
+        );
     }
 
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private static class TypeWithoutIdField {
-        private final String name;
+}
 
-        TypeWithoutIdField(String name) {
-            this.name = name;
-        }
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
+class Entity {
+    private String id;
+    private String name;
+
+    Entity(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
+class TypeWithoutIdField {
+    private final String name;
+
+    TypeWithoutIdField(String name) {
+        this.name = name;
     }
 }
