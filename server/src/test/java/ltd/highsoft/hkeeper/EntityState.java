@@ -5,17 +5,17 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 public class EntityState {
-    private final String id;
+    private final Object id;
     private final String content;
     private final Instant timestamp;
 
-    public EntityState(String id, String content, Instant timestamp) {
+    public EntityState(Object id, String content, Instant timestamp) {
         this.id = id;
         this.content = content;
         this.timestamp = timestamp;
     }
 
-    public String id() {
+    public Object id() {
         return this.id;
     }
 

@@ -36,6 +36,7 @@ class PostgresJsonbStoreTest {
         store.save(entity);
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("select * from entities");
         assertThat(rows.size()).isEqualTo(1);
+        assertThat(rows.get(0).get("id")).isEqualTo("0001");
     }
 
     @SuppressWarnings({"unused", "FieldCanBeLocal"})

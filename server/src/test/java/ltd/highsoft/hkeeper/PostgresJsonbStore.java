@@ -6,10 +6,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.sql.Types;
 import java.time.Instant;
-import java.util.UUID;
 
 public class PostgresJsonbStore extends Store {
     private final JdbcOperations jdbcTemplate;
@@ -28,11 +28,11 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public void save(Object entity) {
-        saveSate(new EntityState(extractId(), asContent(entity), Instant.now()));
+        saveSate(new EntityState(extractId(entity), asContent(entity), Instant.now()));
     }
 
-    private String extractId() {
-        return UUID.randomUUID().toString();
+    private Object extractId(Object entity) {
+        return ReflectionTestUtils.getField(entity, "id");
     }
 
     private String asContent(Object entity) {
@@ -46,7 +46,7 @@ public class PostgresJsonbStore extends Store {
     private void saveSate(EntityState state) {
         String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
         jdbcTemplate.execute(sql, (PreparedStatementCallback<Boolean>) ps -> {
-            ps.setString(1, state.id());
+            ps.setObject(1, state.id());
             ps.setObject(2, state.content(), Types.OTHER);
             ps.setObject(3, state.timestamp());
             return ps.execute();
