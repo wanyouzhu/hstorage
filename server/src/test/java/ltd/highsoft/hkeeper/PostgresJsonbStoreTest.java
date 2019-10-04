@@ -53,6 +53,13 @@ class PostgresJsonbStoreTest {
         assertThat(loaded).isEqualToComparingFieldByField(entity);
     }
 
+    @Test
+    void should_throw_aggregate_not_found_exception_while_aggregate_not_found_during_loading() {
+        Throwable thrown = catchThrowable(() -> store.load("non-existing-aggregate", Entity.class));
+        assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);
+        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.hkeeper.Entity' does not exist!");
+    }
+
     private void recreateCollectionTable() {
         jdbcTemplate.execute("drop table if exists entities");
         jdbcTemplate.execute(

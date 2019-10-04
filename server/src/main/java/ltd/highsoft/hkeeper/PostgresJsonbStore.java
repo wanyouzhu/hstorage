@@ -37,7 +37,7 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public <T> T load(String id, Class<T> clazz) {
-        EntityState state = loadState(id);
+        EntityState state = loadState(id, clazz);
         try {
             return mapper.readValue(state.content(), clazz);
         } catch (IOException e) {
@@ -45,13 +45,14 @@ public class PostgresJsonbStore extends Store {
         }
     }
 
-    private EntityState loadState(String id) {
+    private EntityState loadState(String id, Class<?> clazz) {
         String sql = "select id, state, timestamp from entities where id = ?";
         return jdbcTemplate.execute(sql, (PreparedStatementCallback<EntityState>) ps -> {
             ps.setString(1, id);
             ps.execute();
             ResultSet resultSet = ps.getResultSet();
-            resultSet.next();
+            if (!resultSet.next())
+                throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
             String state = resultSet.getString("state");
             Instant timestamp = resultSet.getTimestamp("timestamp").toInstant();
             return new EntityState(id, state, timestamp);
