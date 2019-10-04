@@ -1,4 +1,4 @@
-package hkeeper;
+package ltd.highsoft.hkeeper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

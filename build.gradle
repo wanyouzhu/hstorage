@@ -7,3 +7,7 @@ allprojects {
 subprojects {
     version = '1.0'
 }
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add '-parameters'
+}
