@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.sql.*;
 
 public class PostgresJsonbStore extends Store {
+
     private final JdbcOperations jdbcTemplate;
     private final ObjectMapper mapper;
     private final TimeService timeService;
