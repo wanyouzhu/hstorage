@@ -5,12 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.sql.Types;
+import java.sql.*;
 
 public class PostgresJsonbStore extends Store {
     private final JdbcOperations jdbcTemplate;
@@ -58,12 +58,12 @@ public class PostgresJsonbStore extends Store {
         return new EntityState(extractId(entity), asContent(entity), timeService.now());
     }
 
-    private Object extractId(Object entity) {
-        Field field = ReflectionUtils.findField(entity.getClass(), "id");
+    private String extractId(Object entity) {
+        Field field = ReflectionUtils.findField(entity.getClass(), "id", String.class);
         if (field == null)
             throw new MappingException("Missing 'id' field in type '" + entity.getClass().getName() + "'!");
         ReflectionUtils.makeAccessible(field);
-        return ReflectionUtils.getField(field, entity);
+        return (String) ReflectionUtils.getField(field, entity);
     }
 
     private String asContent(Object entity) {
@@ -76,12 +76,9 @@ public class PostgresJsonbStore extends Store {
 
     private void saveSate(EntityState state) {
         String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
-        jdbcTemplate.execute(sql, (PreparedStatementCallback<Boolean>) ps -> {
-            ps.setObject(1, state.id());
-            ps.setObject(2, state.content(), Types.OTHER);
-            ps.setObject(3, state.timestamp());
-            return ps.execute();
-        });
+        Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp())};
+        int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP};
+        jdbcTemplate.update(sql, args, types);
     }
 
 }
