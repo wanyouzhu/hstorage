@@ -58,23 +58,3 @@ class PostgresJsonbStoreTest {
     }
 
 }
-
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
-class Entity {
-    private String id;
-    private String name;
-
-    Entity(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-}
-
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
-class TypeWithoutIdField {
-    private final String name;
-
-    TypeWithoutIdField(String name) {
-        this.name = name;
-    }
-}
