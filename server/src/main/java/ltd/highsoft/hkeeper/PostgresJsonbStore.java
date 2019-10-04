@@ -1,13 +1,12 @@
 package ltd.highsoft.hkeeper;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.jdbc.core.*;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.sql.Types;
 import java.time.Instant;
 
@@ -32,7 +31,9 @@ public class PostgresJsonbStore extends Store {
     }
 
     private Object extractId(Object entity) {
-        return ReflectionTestUtils.getField(entity, "id");
+        Field field = ReflectionUtils.findField(entity.getClass(), "id");
+        ReflectionUtils.makeAccessible(field);
+        return ReflectionUtils.getField(field, entity);
     }
 
     private String asContent(Object entity) {
