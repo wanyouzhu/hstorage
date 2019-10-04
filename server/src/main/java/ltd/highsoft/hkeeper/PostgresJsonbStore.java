@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.*;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.sql.*;
-import java.time.Instant;
+import java.sql.Types;
 
 public class PostgresJsonbStore extends Store {
     private final JdbcOperations jdbcTemplate;
@@ -46,17 +46,12 @@ public class PostgresJsonbStore extends Store {
     }
 
     private EntityState loadState(String id, Class<?> clazz) {
-        String sql = "select id, state, timestamp from entities where id = ?";
-        return jdbcTemplate.execute(sql, (PreparedStatementCallback<EntityState>) ps -> {
-            ps.setString(1, id);
-            ps.execute();
-            ResultSet resultSet = ps.getResultSet();
-            if (!resultSet.next())
-                throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
-            String state = resultSet.getString("state");
-            Instant timestamp = resultSet.getTimestamp("timestamp").toInstant();
-            return new EntityState(id, state, timestamp);
-        });
+        try {
+            String sql = "select id, state, timestamp from entities where id = ?";
+            return jdbcTemplate.queryForObject(sql, new AggregateStateMapper(), id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
+        }
     }
 
     private EntityState createEntityState(Object entity) {
