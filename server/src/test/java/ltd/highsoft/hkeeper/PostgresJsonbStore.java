@@ -28,14 +28,18 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public void save(Object entity) {
+        saveSate(new EntityState(extractId(), asContent(entity), Instant.now()));
+    }
+
+    private String extractId() {
+        return UUID.randomUUID().toString();
+    }
+
+    private String asContent(Object entity) {
         try {
-            String json = mapper.writeValueAsString(entity);
-            String id = UUID.randomUUID().toString();
-            EntityState state = new EntityState(id, json, Instant.now());
-            saveSate(state);
+            return mapper.writeValueAsString(entity);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            // FIXME
+            throw new RuntimeException("Mapping error: ", e);
         }
     }
 
