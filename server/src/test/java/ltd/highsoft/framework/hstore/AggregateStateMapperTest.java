@@ -1,5 +1,6 @@
-package ltd.highsoft.hkeeper;
+package ltd.highsoft.framework.hstore;
 
+import ltd.highsoft.framework.hstore.*;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -31,5 +32,5 @@ class AggregateStateMapperTest {
         AggregateState aggregateState = mapper.mapRow(resultSet, 1);
         assertThat(aggregateState).isEqualToComparingFieldByField(new AggregateState(ID, STATE, TIMESTAMP.toInstant()));
     }
-    
+
 }

@@ -1,4 +1,4 @@
-package ltd.highsoft.hkeeper;
+package ltd.highsoft.framework.hstore;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;

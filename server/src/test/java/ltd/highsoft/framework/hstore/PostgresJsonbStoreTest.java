@@ -1,29 +1,36 @@
-package ltd.highsoft.hkeeper;
+package ltd.highsoft.framework.hstore;
 
 import org.assertj.core.api.AbstractThrowableAssert;
 import org.junit.jupiter.api.*;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
 class PostgresJsonbStoreTest {
 
-    private @Resource JdbcOperations jdbcTemplate;
+    private JdbcOperations jdbcTemplate;
     private TimeService timeService;
     private Store store;
 
     @BeforeEach
     void setUp() {
+        jdbcTemplate = new JdbcTemplate(createTestDataSource());
         timeService = new FixedTimeService(Instant.now());
         store = new PostgresJsonbStore(jdbcTemplate, timeService);
         recreateCollectionTable();
+    }
+
+    private DataSource createTestDataSource() {
+        return new SingleConnectionDataSource(
+            "jdbc:postgresql://localhost:5432/hkeeper",
+            "postgres", "postgres", false
+        );
     }
 
     @Test
@@ -42,7 +49,7 @@ class PostgresJsonbStoreTest {
         Object object = new TypeWithoutIdField("Van");
         AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(object));
         exception.isInstanceOf(MappingException.class);
-        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.hkeeper.TypeWithoutIdField'!");
+        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstore.TypeWithoutIdField'!");
     }
 
     @Test
@@ -57,7 +64,7 @@ class PostgresJsonbStoreTest {
     void should_throw_aggregate_not_found_exception_while_aggregate_not_found_during_loading() {
         Throwable thrown = catchThrowable(() -> store.load("non-existing-aggregate", Aggregate.class));
         assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);
-        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.hkeeper.Aggregate' does not exist!");
+        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.framework.hstore.Aggregate' does not exist!");
     }
 
     private void recreateCollectionTable() {

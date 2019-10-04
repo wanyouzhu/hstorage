@@ -1,4 +1,4 @@
-package ltd.highsoft.hkeeper;
+package ltd.highsoft.framework.hstore;
 
 import org.springframework.jdbc.core.RowMapper;
 
