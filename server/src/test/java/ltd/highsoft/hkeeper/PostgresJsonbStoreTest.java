@@ -16,9 +16,17 @@ import static org.assertj.core.api.Assertions.*;
 class PostgresJsonbStoreTest {
 
     private @Resource JdbcOperations jdbcTemplate;
+    private TimeService timeService;
+    private Store store;
 
     @BeforeEach
     void setUp() {
+        timeService = new FixedTimeService(Instant.now());
+        store = new PostgresJsonbStore(jdbcTemplate, timeService);
+        recreateCollectionTable();
+    }
+
+    private void recreateCollectionTable() {
         jdbcTemplate.execute("drop table if exists entities");
         jdbcTemplate.execute(
             "create table entities\n" +
@@ -32,8 +40,6 @@ class PostgresJsonbStoreTest {
 
     @Test
     void should_save_entity_state_into_database() {
-        TimeService timeService = new FixedTimeService(Instant.now());
-        Store store = new PostgresJsonbStore(jdbcTemplate, timeService);
         Entity entity = new Entity("0001", "Van");
         store.save(entity);
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("select * from entities");
@@ -45,8 +51,6 @@ class PostgresJsonbStoreTest {
 
     @Test
     void should_reject_entities_without_id_field() {
-        TimeService timeService = new FixedTimeService(Instant.now());
-        Store store = new PostgresJsonbStore(jdbcTemplate, timeService);
         Object entity = new TypeWithoutIdField("Van");
         AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(entity));
         exception.isInstanceOf(MappingException.class);
