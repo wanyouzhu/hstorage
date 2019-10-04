@@ -22,9 +22,13 @@ public class PostgresJsonbStore extends Store {
 
     PostgresJsonbStore(JdbcOperations jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.mapper = createMapper();
+    }
+
+    private ObjectMapper createMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        this.mapper = mapper;
+        return mapper;
     }
 
     @Override
