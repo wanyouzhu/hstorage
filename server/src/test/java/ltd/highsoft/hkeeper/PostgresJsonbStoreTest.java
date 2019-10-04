@@ -1,5 +1,6 @@
 package ltd.highsoft.hkeeper;
 
+import org.assertj.core.api.AbstractThrowableAssert;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -9,7 +10,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 class PostgresJsonbStoreTest {
@@ -42,6 +43,16 @@ class PostgresJsonbStoreTest {
         assertThat(rows.get(0).get("timestamp")).isEqualTo(Timestamp.from(timeService.now()));
     }
 
+    @Test
+    void should_reject_entities_without_id_field() {
+        TimeService timeService = new FixedTimeService(Instant.now());
+        Store store = new PostgresJsonbStore(jdbcTemplate, timeService);
+        Object entity = new TypeWithoutIdField("Van");
+        AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(entity));
+        exception.isInstanceOf(MappingException.class);
+        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.hkeeper.PostgresJsonbStoreTest$TypeWithoutIdField'!");
+    }
+
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private static class Entity {
         private String id;
@@ -49,6 +60,15 @@ class PostgresJsonbStoreTest {
 
         Entity(String id, String name) {
             this.id = id;
+            this.name = name;
+        }
+    }
+
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private static class TypeWithoutIdField {
+        private final String name;
+
+        TypeWithoutIdField(String name) {
             this.name = name;
         }
     }

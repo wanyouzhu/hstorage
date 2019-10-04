@@ -37,6 +37,7 @@ public class PostgresJsonbStore extends Store {
 
     private Object extractId(Object entity) {
         Field field = ReflectionUtils.findField(entity.getClass(), "id");
+        if (field == null) throw new MappingException("Missing 'id' field in type '" + entity.getClass().getName() + "'!");
         ReflectionUtils.makeAccessible(field);
         return ReflectionUtils.getField(field, entity);
     }
