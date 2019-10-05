@@ -11,9 +11,11 @@ import java.lang.reflect.Field;
 
 public class AggregateMapper {
 
-    ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final TimeService timeService;
 
-    public AggregateMapper() {
+    public AggregateMapper(TimeService timeService) {
+        this.timeService = timeService;
         this.mapper = createMapper();
     }
 
@@ -47,4 +49,9 @@ public class AggregateMapper {
         ReflectionUtils.makeAccessible(field);
         return (String) ReflectionUtils.getField(field, aggregate);
     }
+
+    AggregateState createAggregateState(Object aggregate) {
+        return new AggregateState(extractId(aggregate), asStateContent(aggregate), timeService.now());
+    }
+
 }

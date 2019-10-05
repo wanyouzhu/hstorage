@@ -13,18 +13,20 @@ public class PostgresJsonbStore extends Store {
 
     PostgresJsonbStore(JdbcOperations jdbcTemplate, TimeService timeService) {
         this.jdbcTemplate = jdbcTemplate;
-        this.aggregateMapper = new AggregateMapper();
+        this.aggregateMapper = new AggregateMapper(timeService);
         this.timeService = timeService;
     }
 
     @Override
     public void save(Object aggregate) {
-        saveState(createAggregateState(aggregate));
+        saveState(aggregateMapper.createAggregateState(aggregate));
     }
 
-    @Override
-    public <T> T load(String id, Class<T> clazz) {
-        return aggregateMapper.mapToAggregate(clazz, loadState(id, clazz));
+    private void saveState(AggregateState state) {
+        String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
+        Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp())};
+        int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP};
+        jdbcTemplate.update(sql, args, types);
     }
 
     private AggregateState loadState(String id, Class<?> clazz) {
@@ -36,15 +38,9 @@ public class PostgresJsonbStore extends Store {
         }
     }
 
-    private AggregateState createAggregateState(Object aggregate) {
-        return new AggregateState(aggregateMapper.extractId(aggregate), aggregateMapper.asStateContent(aggregate), timeService.now());
-    }
-
-    private void saveState(AggregateState state) {
-        String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
-        Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp())};
-        int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP};
-        jdbcTemplate.update(sql, args, types);
+    @Override
+    public <T> T load(String id, Class<T> clazz) {
+        return aggregateMapper.mapToAggregate(clazz, loadState(id, clazz));
     }
 
 }
