@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.*;
 
-public class AggregateStateMapper implements RowMapper<AggregateState> {
+public class AggregateStateRowMapper implements RowMapper<AggregateState> {
 
     @Override
     public AggregateState mapRow(ResultSet rs, int rowNum) throws SQLException {

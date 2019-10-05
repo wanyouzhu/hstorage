@@ -21,7 +21,7 @@ public class AggregateMapper {
         return mapper;
     }
 
-    <T> T getAggregate(Class<T> clazz, AggregateState state) {
+    <T> T mapToAggregate(Class<T> clazz, AggregateState state) {
         try {
             return mapper.readValue(state.content(), clazz);
         } catch (IOException e) {

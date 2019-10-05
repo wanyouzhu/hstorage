@@ -27,13 +27,13 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public <T> T load(String id, Class<T> clazz) {
-        return aggregateMapper.getAggregate(clazz, loadState(id, clazz));
+        return aggregateMapper.mapToAggregate(clazz, loadState(id, clazz));
     }
 
     private AggregateState loadState(String id, Class<?> clazz) {
         try {
             String sql = "select id, state, timestamp from entities where id = ?";
-            return jdbcTemplate.queryForObject(sql, new AggregateStateMapper(), id);
+            return jdbcTemplate.queryForObject(sql, new AggregateStateRowMapper(), id);
         } catch (EmptyResultDataAccessException e) {
             throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
         }
