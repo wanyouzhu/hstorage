@@ -15,12 +15,12 @@ import java.sql.*;
 public class PostgresJsonbStore extends Store {
 
     private final JdbcOperations jdbcTemplate;
-    private final ObjectMapper mapper;
     private final TimeService timeService;
+    private final AggregateMapper aggregateMapper = new AggregateMapper();
 
     PostgresJsonbStore(JdbcOperations jdbcTemplate, TimeService timeService) {
         this.jdbcTemplate = jdbcTemplate;
-        this.mapper = createMapper();
+        this.aggregateMapper.mapper = createMapper();
         this.timeService = timeService;
     }
 
@@ -33,14 +33,17 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public void save(Object aggregate) {
-        saveSate(createAggregateState(aggregate));
+        saveState(createAggregateState(aggregate));
     }
 
     @Override
     public <T> T load(String id, Class<T> clazz) {
-        AggregateState state = loadState(id, clazz);
+        return getAggregate(clazz, loadState(id, clazz));
+    }
+
+    private <T> T getAggregate(Class<T> clazz, AggregateState state) {
         try {
-            return mapper.readValue(state.content(), clazz);
+            return aggregateMapper.mapper.readValue(state.content(), clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -69,13 +72,13 @@ public class PostgresJsonbStore extends Store {
 
     private String asStateContent(Object aggregate) {
         try {
-            return mapper.writeValueAsString(aggregate);
+            return aggregateMapper.mapper.writeValueAsString(aggregate);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Mapping error: ", e);
         }
     }
 
-    private void saveSate(AggregateState state) {
+    private void saveState(AggregateState state) {
         String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
         Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp())};
         int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP};
