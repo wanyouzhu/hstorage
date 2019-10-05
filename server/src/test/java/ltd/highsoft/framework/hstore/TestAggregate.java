@@ -1,11 +1,11 @@
 package ltd.highsoft.framework.hstore;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class Aggregate {
+public class TestAggregate {
     private String id;
     private String name;
 
-    Aggregate(String id, String name) {
+    TestAggregate(String id, String name) {
         this.id = id;
         this.name = name;
     }

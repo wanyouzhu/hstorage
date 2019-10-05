@@ -35,8 +35,8 @@ class PostgresJsonbStoreTest {
 
     @Test
     void should_save_aggregate_state_into_database_correctly() {
-        Aggregate aggregate = new Aggregate("0001", "Van");
-        store.save(aggregate);
+        TestAggregate testAggregate = new TestAggregate("0001", "Van");
+        store.save(testAggregate);
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("select * from entities");
         assertThat(rows.size()).isEqualTo(1);
         assertThat(rows.get(0).get("id")).isEqualTo("0001");
@@ -54,17 +54,17 @@ class PostgresJsonbStoreTest {
 
     @Test
     void should_load_aggregate_state_from_database_correctly() {
-        Aggregate aggregate = new Aggregate("0001", "Van");
-        store.save(aggregate);
-        Aggregate loaded = store.load("0001", Aggregate.class);
-        assertThat(loaded).isEqualToComparingFieldByField(aggregate);
+        TestAggregate testAggregate = new TestAggregate("0001", "Van");
+        store.save(testAggregate);
+        TestAggregate loaded = store.load("0001", TestAggregate.class);
+        assertThat(loaded).isEqualToComparingFieldByField(testAggregate);
     }
 
     @Test
     void should_throw_aggregate_not_found_exception_while_aggregate_not_found_during_loading() {
-        Throwable thrown = catchThrowable(() -> store.load("non-existing-aggregate", Aggregate.class));
+        Throwable thrown = catchThrowable(() -> store.load("non-existing-aggregate", TestAggregate.class));
         assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);
-        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.framework.hstore.Aggregate' does not exist!");
+        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.framework.hstore.TestAggregate' does not exist!");
     }
 
     private void recreateCollectionTable() {
