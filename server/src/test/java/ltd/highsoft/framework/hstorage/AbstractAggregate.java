@@ -1,4 +1,4 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
 abstract class AbstractAggregate extends TestAggregate {
 

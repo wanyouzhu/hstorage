@@ -1,4 +1,4 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.assertj.core.api.AbstractThrowableAssert;
@@ -32,7 +32,7 @@ class AggregateMapperTest {
         Object object = new TypeWithoutIdField("Van");
         AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> mapper.mapToState(object));
         exception.isInstanceOf(MappingException.class);
-        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstore.TypeWithoutIdField'!");
+        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstorage.TypeWithoutIdField'!");
     }
 
     @Test
@@ -64,7 +64,7 @@ class AggregateMapperTest {
         AggregateState state = new AggregateState("one", "{\"id\":\"one\",\"name\":\"van\"}", timeService.now());
         Throwable thrown = catchThrowable(() -> mapper.mapToAggregate(state, AbstractAggregate.class));
         assertThat(thrown).isInstanceOf(MappingException.class);
-        assertThat(thrown).hasMessage("Type 'ltd.highsoft.framework.hstore.AbstractAggregate' is not constructable!");
+        assertThat(thrown).hasMessage("Type 'ltd.highsoft.framework.hstorage.AbstractAggregate' is not constructable!");
         assertThat(thrown).hasCauseInstanceOf(JsonMappingException.class);
     }
 

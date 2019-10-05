@@ -1,16 +1,16 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import java.sql.*;
 
-public class PostgresJsonbStore extends Store {
+public class PostgresJsonbStorage extends Storage {
 
     private final JdbcOperations jdbcTemplate;
     private final AggregateMapper aggregateMapper;
 
-    PostgresJsonbStore(JdbcOperations jdbcTemplate, TimeService timeService) {
+    PostgresJsonbStorage(JdbcOperations jdbcTemplate, TimeService timeService) {
         this.jdbcTemplate = jdbcTemplate;
         this.aggregateMapper = new AggregateMapper(timeService);
     }

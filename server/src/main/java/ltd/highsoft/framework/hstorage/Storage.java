@@ -1,6 +1,6 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
-public abstract class Store {
+public abstract class Storage {
 
     public abstract void save(Object aggregate);
 

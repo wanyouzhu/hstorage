@@ -1,6 +1,4 @@
-package ltd.highsoft.framework.hstore;
-
-import ltd.highsoft.framework.hstore.TimeService;
+package ltd.highsoft.framework.hstorage;
 
 import java.time.Instant;
 

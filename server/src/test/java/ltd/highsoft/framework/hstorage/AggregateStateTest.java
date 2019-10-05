@@ -1,6 +1,5 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
-import ltd.highsoft.framework.hstore.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

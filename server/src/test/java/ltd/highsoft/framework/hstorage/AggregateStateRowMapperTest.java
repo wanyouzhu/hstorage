@@ -1,4 +1,4 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;

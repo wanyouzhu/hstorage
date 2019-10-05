@@ -1,7 +1,6 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
 import io.micrometer.core.instrument.util.StringUtils;
-import ltd.highsoft.framework.hstore.MalformedDataException;
 
 import java.time.Instant;
 

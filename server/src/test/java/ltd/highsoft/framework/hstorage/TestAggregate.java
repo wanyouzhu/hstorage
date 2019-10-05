@@ -1,14 +1,12 @@
-package ltd.highsoft.framework.hstore;
+package ltd.highsoft.framework.hstorage;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class FullConstructableAggregate {
-
+public class TestAggregate {
     private String id;
     private String name;
 
-    public FullConstructableAggregate(String id, String name) {
+    TestAggregate(String id, String name) {
         this.id = id;
         this.name = name;
     }
-
 }
