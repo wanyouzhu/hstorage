@@ -1,10 +1,13 @@
 package ltd.highsoft.framework.hstore;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 public class AggregateMapper {
 
@@ -29,4 +32,19 @@ public class AggregateMapper {
         }
     }
 
+    String asStateContent(Object aggregate) {
+        try {
+            return mapper.writeValueAsString(aggregate);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Mapping error: ", e);
+        }
+    }
+
+    String extractId(Object aggregate) {
+        Field field = ReflectionUtils.findField(aggregate.getClass(), "id", String.class);
+        if (field == null)
+            throw new MappingException("Missing 'id' field in type '" + aggregate.getClass().getName() + "'!");
+        ReflectionUtils.makeAccessible(field);
+        return (String) ReflectionUtils.getField(field, aggregate);
+    }
 }

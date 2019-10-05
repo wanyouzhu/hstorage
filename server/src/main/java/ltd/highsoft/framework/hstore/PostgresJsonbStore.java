@@ -1,11 +1,8 @@
 package ltd.highsoft.framework.hstore;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.sql.*;
 
 public class PostgresJsonbStore extends Store {
@@ -40,23 +37,7 @@ public class PostgresJsonbStore extends Store {
     }
 
     private AggregateState createAggregateState(Object aggregate) {
-        return new AggregateState(extractId(aggregate), asStateContent(aggregate), timeService.now());
-    }
-
-    private String extractId(Object aggregate) {
-        Field field = ReflectionUtils.findField(aggregate.getClass(), "id", String.class);
-        if (field == null)
-            throw new MappingException("Missing 'id' field in type '" + aggregate.getClass().getName() + "'!");
-        ReflectionUtils.makeAccessible(field);
-        return (String) ReflectionUtils.getField(field, aggregate);
-    }
-
-    private String asStateContent(Object aggregate) {
-        try {
-            return aggregateMapper.mapper.writeValueAsString(aggregate);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Mapping error: ", e);
-        }
+        return new AggregateState(aggregateMapper.extractId(aggregate), aggregateMapper.asStateContent(aggregate), timeService.now());
     }
 
     private void saveState(AggregateState state) {
