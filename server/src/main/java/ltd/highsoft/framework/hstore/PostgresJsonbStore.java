@@ -1,9 +1,6 @@
 package ltd.highsoft.framework.hstore;
 
-import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.util.ReflectionUtils;
@@ -16,19 +13,12 @@ public class PostgresJsonbStore extends Store {
 
     private final JdbcOperations jdbcTemplate;
     private final TimeService timeService;
-    private final AggregateMapper aggregateMapper = new AggregateMapper();
+    private final AggregateMapper aggregateMapper;
 
     PostgresJsonbStore(JdbcOperations jdbcTemplate, TimeService timeService) {
         this.jdbcTemplate = jdbcTemplate;
-        this.aggregateMapper.mapper = createMapper();
+        this.aggregateMapper = new AggregateMapper();
         this.timeService = timeService;
-    }
-
-    private ObjectMapper createMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new ParameterNamesModule());
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        return mapper;
     }
 
     @Override
