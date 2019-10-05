@@ -8,13 +8,11 @@ import java.sql.*;
 public class PostgresJsonbStore extends Store {
 
     private final JdbcOperations jdbcTemplate;
-    private final TimeService timeService;
     private final AggregateMapper aggregateMapper;
 
     PostgresJsonbStore(JdbcOperations jdbcTemplate, TimeService timeService) {
         this.jdbcTemplate = jdbcTemplate;
         this.aggregateMapper = new AggregateMapper(timeService);
-        this.timeService = timeService;
     }
 
     @Override
@@ -29,6 +27,11 @@ public class PostgresJsonbStore extends Store {
         jdbcTemplate.update(sql, args, types);
     }
 
+    @Override
+    public <T> T load(String id, Class<T> clazz) {
+        return aggregateMapper.mapToAggregate(clazz, loadState(id, clazz));
+    }
+
     private AggregateState loadState(String id, Class<?> clazz) {
         try {
             String sql = "select id, state, timestamp from entities where id = ?";
@@ -36,11 +39,6 @@ public class PostgresJsonbStore extends Store {
         } catch (EmptyResultDataAccessException e) {
             throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
         }
-    }
-
-    @Override
-    public <T> T load(String id, Class<T> clazz) {
-        return aggregateMapper.mapToAggregate(clazz, loadState(id, clazz));
     }
 
 }

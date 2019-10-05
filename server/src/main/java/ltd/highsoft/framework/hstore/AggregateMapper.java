@@ -34,7 +34,11 @@ public class AggregateMapper {
         }
     }
 
-    String asStateContent(Object aggregate) {
+    AggregateState createAggregateState(Object aggregate) {
+        return new AggregateState(extractId(aggregate), asStateContent(aggregate), timeService.now());
+    }
+
+    private String asStateContent(Object aggregate) {
         try {
             return mapper.writeValueAsString(aggregate);
         } catch (JsonProcessingException e) {
@@ -42,16 +46,12 @@ public class AggregateMapper {
         }
     }
 
-    String extractId(Object aggregate) {
+    private String extractId(Object aggregate) {
         Field field = ReflectionUtils.findField(aggregate.getClass(), "id", String.class);
         if (field == null)
             throw new MappingException("Missing 'id' field in type '" + aggregate.getClass().getName() + "'!");
         ReflectionUtils.makeAccessible(field);
         return (String) ReflectionUtils.getField(field, aggregate);
-    }
-
-    AggregateState createAggregateState(Object aggregate) {
-        return new AggregateState(extractId(aggregate), asStateContent(aggregate), timeService.now());
     }
 
 }
