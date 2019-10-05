@@ -5,7 +5,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.util.ReflectionUtils;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.*;
 
@@ -28,15 +27,7 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public <T> T load(String id, Class<T> clazz) {
-        return getAggregate(clazz, loadState(id, clazz));
-    }
-
-    private <T> T getAggregate(Class<T> clazz, AggregateState state) {
-        try {
-            return aggregateMapper.mapper.readValue(state.content(), clazz);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return aggregateMapper.getAggregate(clazz, loadState(id, clazz));
     }
 
     private AggregateState loadState(String id, Class<?> clazz) {
