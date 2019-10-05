@@ -1,6 +1,5 @@
 package ltd.highsoft.framework.hstore;
 
-import org.assertj.core.api.AbstractThrowableAssert;
 import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -42,14 +41,6 @@ class PostgresJsonbStoreTest {
         assertThat(rows.get(0).get("id")).isEqualTo("0001");
         assertThat(rows.get(0).get("state").toString()).isEqualTo("{\"id\": \"0001\", \"name\": \"Van\"}");
         assertThat(rows.get(0).get("timestamp")).isEqualTo(Timestamp.from(timeService.now()));
-    }
-
-    @Test
-    void should_reject_aggregates_without_id_field() {
-        Object object = new TypeWithoutIdField("Van");
-        AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> store.save(object));
-        exception.isInstanceOf(MappingException.class);
-        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstore.TypeWithoutIdField'!");
     }
 
     @Test
