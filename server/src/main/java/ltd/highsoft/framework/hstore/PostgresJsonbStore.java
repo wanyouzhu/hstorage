@@ -17,7 +17,7 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public void save(Object aggregate) {
-        saveState(aggregateMapper.createAggregateState(aggregate));
+        saveState(aggregateMapper.mapToState(aggregate));
     }
 
     private void saveState(AggregateState state) {

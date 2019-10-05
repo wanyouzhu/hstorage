@@ -34,7 +34,7 @@ public class AggregateMapper {
         }
     }
 
-    AggregateState createAggregateState(Object aggregate) {
+    AggregateState mapToState(Object aggregate) {
         return new AggregateState(extractId(aggregate), asStateContent(aggregate), timeService.now());
     }
 
