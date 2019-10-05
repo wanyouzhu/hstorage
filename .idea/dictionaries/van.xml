@@ -5,6 +5,7 @@
       <w>hkeeper</w>
       <w>hstorage</w>
       <w>hstore</w>
+      <w>persister</w>
       <w>postgresql</w>
     </words>
   </dictionary>

@@ -1,9 +1,21 @@
 package ltd.highsoft.framework.hstorage;
 
-public abstract class Storage {
+public class Storage {
 
-    public abstract void save(Object aggregate);
+    private final AggregateMapper mapper;
+    private final StatePersister persister;
 
-    public abstract <T> T load(String id, Class<T> clazz);
+    public Storage(StatePersister persister, TimeService timeService) {
+        this.mapper = new AggregateMapper(timeService);
+        this.persister = persister;
+    }
+
+    public void save(Object aggregate) {
+        persister.saveState(mapper.mapToState(aggregate));
+    }
+
+    public <T> T load(String id, Class<T> clazz) {
+        return mapper.mapToAggregate(persister.loadState(id, clazz), clazz);
+    }
 
 }

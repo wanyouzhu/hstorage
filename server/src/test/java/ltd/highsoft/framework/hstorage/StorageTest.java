@@ -11,7 +11,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class PostgresJsonbStorageTest {
+class StorageTest {
 
     private JdbcOperations jdbcTemplate;
     private TimeService timeService;
@@ -21,7 +21,9 @@ class PostgresJsonbStorageTest {
     void setUp() {
         jdbcTemplate = new JdbcTemplate(createTestDataSource());
         timeService = new FixedTimeService(Instant.now());
-        storage = new PostgresJsonbStorage(jdbcTemplate, timeService);
+        StatePersister persister = new JdbcStatePersister(jdbcTemplate);
+        TimeService timeService1 = timeService;
+        storage = new Storage(persister, timeService1);
         recreateCollectionTable();
     }
 
