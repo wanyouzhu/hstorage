@@ -21,9 +21,7 @@ class StorageTest {
     void setUp() {
         jdbcTemplate = new JdbcTemplate(createTestDataSource());
         timeService = new FixedTimeService(Instant.now());
-        StatePersister persister = new JdbcStatePersister(jdbcTemplate);
-        TimeService timeService1 = timeService;
-        storage = new Storage(persister, timeService1);
+        storage = new Storage(new JdbcStatePersister(jdbcTemplate), timeService);
         recreateCollectionTable();
     }
 
