@@ -1,13 +1,13 @@
 package ltd.highsoft.framework.hstorage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import org.assertj.core.api.AbstractThrowableAssert;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 class AggregateMapperTest {
@@ -30,9 +30,18 @@ class AggregateMapperTest {
     @Test
     void should_reject_aggregates_without_id_field_while_mapping() {
         Object object = new TypeWithoutIdField("Van");
-        AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> mapper.mapToState(object));
-        exception.isInstanceOf(MappingException.class);
-        exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstorage.TypeWithoutIdField'!");
+        Throwable thrown = catchThrowable(() -> mapper.mapToState(object));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstorage.TypeWithoutIdField'!");
+    }
+
+    @Test
+    void should_reject_object_that_can_not_be_serializable() {
+        Object object = new NonSerializableObject();
+        Throwable thrown = catchThrowable(() -> mapper.mapToState(object));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Mapping error:");
+        assertThat(thrown).hasCauseInstanceOf(JsonProcessingException.class);
     }
 
     @Test

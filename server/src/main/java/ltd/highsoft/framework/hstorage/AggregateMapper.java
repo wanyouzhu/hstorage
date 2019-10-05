@@ -44,7 +44,7 @@ public class AggregateMapper {
         try {
             return mapper.writeValueAsString(aggregate);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Mapping error: ", e);
+            throw new MappingException("Mapping error:", e);
         }
     }
 
