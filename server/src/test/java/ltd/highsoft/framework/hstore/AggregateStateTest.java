@@ -29,4 +29,5 @@ class AggregateStateTest {
         assertThat(thrown).isInstanceOf(MalformedDataException.class);
         assertThat(thrown).hasMessage("Aggregate timestamp is missing!");
     }
+
 }
