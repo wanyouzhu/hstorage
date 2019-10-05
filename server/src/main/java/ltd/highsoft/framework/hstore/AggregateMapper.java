@@ -30,7 +30,7 @@ public class AggregateMapper {
         try {
             return mapper.readValue(state.content(), clazz);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MalformedDataException("Malformed state data!", e);
         }
     }
 

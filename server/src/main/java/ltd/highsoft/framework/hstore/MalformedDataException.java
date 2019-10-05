@@ -6,4 +6,8 @@ public class MalformedDataException extends RuntimeException {
         super(message);
     }
 
+    public MalformedDataException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

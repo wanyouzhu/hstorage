@@ -3,9 +3,10 @@ package ltd.highsoft.framework.hstore;
 import org.assertj.core.api.AbstractThrowableAssert;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 class AggregateMapperTest {
@@ -46,6 +47,15 @@ class AggregateMapperTest {
         AggregateState state = new AggregateState("one", "{\"id\":\"one\",\"name\":\"van\"}", timeService.now());
         FullConstructableAggregate mapped = mapper.mapToAggregate(state, FullConstructableAggregate.class);
         assertThat(mapped).isEqualToComparingFieldByField(new FullConstructableAggregate("one", "van"));
+    }
+
+    @Test
+    void should_reject_malformed_state_during_mapping() {
+        AggregateState malformedState = new AggregateState("one", "{\"id\":\"one\",\"name\":}", timeService.now());
+        Throwable thrown = catchThrowable(() -> mapper.mapToAggregate(malformedState, TestAggregate.class));
+        assertThat(thrown).isInstanceOf(MalformedDataException.class);
+        assertThat(thrown).hasMessage("Malformed state data!");
+        assertThat(thrown).hasCauseInstanceOf(IOException.class);
     }
 
 }
