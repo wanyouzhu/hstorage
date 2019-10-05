@@ -1,5 +1,6 @@
 package ltd.highsoft.framework.hstore;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.assertj.core.api.AbstractThrowableAssert;
 import org.junit.jupiter.api.*;
 
@@ -56,6 +57,15 @@ class AggregateMapperTest {
         assertThat(thrown).isInstanceOf(MalformedDataException.class);
         assertThat(thrown).hasMessage("Malformed state data!");
         assertThat(thrown).hasCauseInstanceOf(IOException.class);
+    }
+
+    @Test
+    void should_reject_non_deserializable_types_during_mapping() {
+        AggregateState state = new AggregateState("one", "{\"id\":\"one\",\"name\":\"van\"}", timeService.now());
+        Throwable thrown = catchThrowable(() -> mapper.mapToAggregate(state, AbstractAggregate.class));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Type 'ltd.highsoft.framework.hstore.AbstractAggregate' is not constructable!");
+        assertThat(thrown).hasCauseInstanceOf(JsonMappingException.class);
     }
 
 }

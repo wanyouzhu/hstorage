@@ -6,4 +6,8 @@ public class MappingException extends RuntimeException {
         super(message);
     }
 
+    public MappingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

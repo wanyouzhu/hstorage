@@ -2,7 +2,7 @@ package ltd.highsoft.framework.hstore;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.util.ReflectionUtils;
 
@@ -29,6 +29,8 @@ public class AggregateMapper {
     <T> T mapToAggregate(AggregateState state, Class<T> clazz) {
         try {
             return mapper.readValue(state.content(), clazz);
+        } catch (JsonMappingException e) {
+            throw new MappingException("Type '" + clazz.getName() + "' is not constructable!", e);
         } catch (IOException e) {
             throw new MalformedDataException("Malformed state data!", e);
         }
