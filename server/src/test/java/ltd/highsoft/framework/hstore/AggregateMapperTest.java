@@ -20,7 +20,7 @@ class AggregateMapperTest {
     }
 
     @Test
-    void should_map_aggregate_to_state_by_fields() {
+    void should_be_able_to_map_aggregate_to_state_by_fields() {
         AggregateState expect = new AggregateState("one", "{\"id\":\"one\",\"name\":\"van\"}", timeService.now());
         assertThat(mapper.mapToState(new TestAggregate("one", "van"))).isEqualToComparingFieldByField(expect);
     }
@@ -31,6 +31,14 @@ class AggregateMapperTest {
         AbstractThrowableAssert<?, ?> exception = assertThatThrownBy(() -> mapper.mapToState(object));
         exception.isInstanceOf(MappingException.class);
         exception.hasMessage("Missing 'id' field in type 'ltd.highsoft.framework.hstore.TypeWithoutIdField'!");
+    }
+
+    @Test
+    void should_be_able_to_map_state_to_aggregate_by_fields() {
+        AggregateState state = new AggregateState("one", "{\"id\":\"one\",\"name\":\"van\"}", timeService.now());
+        DefaultConstructableAggregate mapped = mapper.mapToAggregate(state, DefaultConstructableAggregate.class);
+        assertThat(mapped).hasFieldOrPropertyWithValue("id", "one");
+        assertThat(mapped).hasFieldOrPropertyWithValue("name", "van");
     }
 
 }

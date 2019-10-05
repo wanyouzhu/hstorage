@@ -29,7 +29,7 @@ public class PostgresJsonbStore extends Store {
 
     @Override
     public <T> T load(String id, Class<T> clazz) {
-        return aggregateMapper.mapToAggregate(clazz, loadState(id, clazz));
+        return aggregateMapper.mapToAggregate(loadState(id, clazz), clazz);
     }
 
     private AggregateState loadState(String id, Class<?> clazz) {
