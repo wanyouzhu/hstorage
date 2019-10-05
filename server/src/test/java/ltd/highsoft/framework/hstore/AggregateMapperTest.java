@@ -41,4 +41,11 @@ class AggregateMapperTest {
         assertThat(mapped).hasFieldOrPropertyWithValue("name", "van");
     }
 
+    @Test
+    void should_be_able_to_map_state_to_aggregate_by_constructor() {
+        AggregateState state = new AggregateState("one", "{\"id\":\"one\",\"name\":\"van\"}", timeService.now());
+        FullConstructableAggregate mapped = mapper.mapToAggregate(state, FullConstructableAggregate.class);
+        assertThat(mapped).isEqualToComparingFieldByField(new FullConstructableAggregate("one", "van"));
+    }
+
 }
