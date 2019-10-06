@@ -42,11 +42,4 @@ class StorageTest {
         assertThat(loaded).isEqualToComparingFieldByField(testAggregate);
     }
 
-    @Test
-    void should_fail_if_aggregate_not_found_during_loading() {
-        Throwable thrown = catchThrowable(() -> storage.load("non-existing-aggregate", TestAggregate.class));
-        assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);
-        assertThat(thrown).hasMessage("Aggregate 'non-existing-aggregate' of type 'ltd.highsoft.framework.hstorage.TestAggregate' does not exist!");
-    }
-
 }

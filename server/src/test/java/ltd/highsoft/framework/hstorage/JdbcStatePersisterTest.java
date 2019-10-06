@@ -40,6 +40,13 @@ class JdbcStatePersisterTest {
     }
 
     @Test
+    void should_fail_if_aggregate_state_not_found_in_database() {
+        Throwable thrown = catchThrowable(() -> persister.loadState("nothing", TestAggregate.class));
+        assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);
+        assertThat(thrown).hasMessage("Aggregate 'nothing' of type 'ltd.highsoft.framework.hstorage.TestAggregate' does not exist!");
+    }
+
+    @Test
     void should_reject_multiple_rows_from_database_during_loading() {
         testDatabase.recreateCollectionTableWithPrimaryKey();
         testDatabase.addTestData("one", "{\"id\": \"one\"}", Instant.EPOCH);
