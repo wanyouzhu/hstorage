@@ -1,6 +1,6 @@
 package ltd.highsoft.framework.hstorage;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.*;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import java.sql.*;
@@ -28,6 +28,8 @@ public class JdbcStatePersister implements StatePersister {
             return jdbcTemplate.queryForObject(sql, new AggregateStateRowMapper(), id);
         } catch (EmptyResultDataAccessException e) {
             throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new MalformedDataException("Multiple rows associated to the key '" + id + "'!", e);
         }
     }
 

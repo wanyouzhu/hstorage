@@ -4,6 +4,8 @@ import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Map;
 
 public class TestDatabase {
@@ -39,6 +41,22 @@ public class TestDatabase {
 
     public JdbcOperations jdbcTemplate() {
         return jdbcTemplate;
+    }
+
+    public void recreateCollectionTableWithPrimaryKey() {
+        jdbcTemplate.execute("drop table if exists entities");
+        jdbcTemplate.execute(
+            "create table entities\n" +
+                "(\n" +
+                "    id        varchar(50) not null,\n" +
+                "    state     jsonb       not null,\n" +
+                "    timestamp timestamp   not null\n" +
+                ")"
+        );
+    }
+
+    public void addTestData(String id, String state, Instant timestamp) {
+        jdbcTemplate.update("insert into entities values(?, ? ::jsonb, ?)", id, state, Timestamp.from(timestamp));
     }
 
 }

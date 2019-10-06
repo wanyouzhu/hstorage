@@ -1,6 +1,7 @@
 package ltd.highsoft.framework.hstorage;
 
 import org.junit.jupiter.api.*;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -36,6 +37,17 @@ class JdbcStatePersisterTest {
         persister.saveState(state);
         AggregateState loaded = persister.loadState("one", TestAggregate.class);
         assertThat(loaded).isEqualToComparingFieldByField(state);
+    }
+
+    @Test
+    void should_reject_multiple_rows_from_database_during_loading() {
+        testDatabase.recreateCollectionTableWithPrimaryKey();
+        testDatabase.addTestData("one", "{\"id\": \"one\"}", Instant.EPOCH);
+        testDatabase.addTestData("one", "{\"id\": \"one\"}", Instant.EPOCH);
+        Throwable thrown = catchThrowable(() -> persister.loadState("one", TestAggregate.class));
+        assertThat(thrown).isInstanceOf(MalformedDataException.class);
+        assertThat(thrown).hasMessage("Multiple rows associated to the key 'one'!");
+        assertThat(thrown).hasCauseInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 
 }
