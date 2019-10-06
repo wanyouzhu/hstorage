@@ -1,18 +1,16 @@
 package ltd.highsoft.framework.hstorage;
 
 import org.junit.jupiter.api.*;
-import org.springframework.jdbc.core.JdbcOperations;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class StorageTest {
 
     private TestDatabase testDatabase;
-    private JdbcOperations jdbcTemplate;
     private TimeService timeService;
     private Storage storage;
 
