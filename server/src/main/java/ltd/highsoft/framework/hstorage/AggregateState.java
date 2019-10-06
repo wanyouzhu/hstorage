@@ -6,11 +6,13 @@ import java.time.Instant;
 
 public class AggregateState {
 
+    private final String collection;
     private final String id;
     private final String state;
     private final Instant timestamp;
 
     public AggregateState(String collection, String id, String state, Instant timestamp) {
+        this.collection = collection;
         this.id = id;
         this.state = state;
         this.timestamp = timestamp;
@@ -42,7 +44,7 @@ public class AggregateState {
     }
 
     public String collection() {
-        return "entities"; // FIXME
+        return collection;
     }
 
     public String id() {

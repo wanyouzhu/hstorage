@@ -11,7 +11,7 @@ public class Storage {
     }
 
     public void save(Object aggregate) {
-        persister.saveState("entities", mapper.mapToState(aggregate));
+        persister.saveState(mapper.mapToState(aggregate));
     }
 
     public <T> T load(String id, Class<T> clazz) {

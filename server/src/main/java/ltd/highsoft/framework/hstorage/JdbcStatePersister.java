@@ -16,7 +16,7 @@ public class JdbcStatePersister implements StatePersister {
     }
 
     @Override
-    public void saveState(String collection, AggregateState state) {
+    public void saveState(AggregateState state) {
         jdbcTemplate.update(getSaveCommand(), getSaveArgs(state));
     }
 
