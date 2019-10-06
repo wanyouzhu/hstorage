@@ -16,7 +16,7 @@ public class JdbcStatePersister implements StatePersister {
     }
 
     @Override
-    public void saveState(AggregateState state) {
+    public void saveState(String collection, AggregateState state) {
         jdbcTemplate.update(getSaveCommand(), getSaveArgs(state));
     }
 
@@ -36,7 +36,7 @@ public class JdbcStatePersister implements StatePersister {
     }
 
     @Override
-    public AggregateState loadState(String id, Class<?> clazz) {
+    public AggregateState loadState(String collection, String id, Class<?> clazz) {
         try {
             return jdbcTemplate.queryForObject(getLoadCommand(), getLoadArgs(id), new AggregateStateRowMapper());
         } catch (EmptyResultDataAccessException e) {

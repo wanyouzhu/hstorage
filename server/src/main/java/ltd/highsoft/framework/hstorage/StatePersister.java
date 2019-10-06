@@ -2,8 +2,8 @@ package ltd.highsoft.framework.hstorage;
 
 public interface StatePersister {
 
-    void saveState(AggregateState state);
+    void saveState(String collection, AggregateState state);
 
-    AggregateState loadState(String id, Class<?> clazz);
+    AggregateState loadState(String collection, String id, Class<?> clazz);
     
 }

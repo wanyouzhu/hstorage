@@ -10,6 +10,13 @@ public class AggregateState {
     private final String state;
     private final Instant timestamp;
 
+    public AggregateState(String collection, String id, String state, Instant timestamp) {
+        this.id = id;
+        this.state = state;
+        this.timestamp = timestamp;
+        validate();
+    }
+
     public AggregateState(String id, String state, Instant timestamp) {
         this.id = id;
         this.state = state;
@@ -39,6 +46,10 @@ public class AggregateState {
         if (timestamp == null) {
             throw new MalformedDataException("Aggregate timestamp is missing!");
         }
+    }
+
+    public String collection() {
+        return "entities"; // FIXME
     }
 
     public String id() {

@@ -11,11 +11,11 @@ public class Storage {
     }
 
     public void save(Object aggregate) {
-        persister.saveState(mapper.mapToState(aggregate));
+        persister.saveState("entities", mapper.mapToState(aggregate));
     }
 
     public <T> T load(String id, Class<T> clazz) {
-        return mapper.mapToAggregate(persister.loadState(id, clazz), clazz);
+        return mapper.mapToAggregate(persister.loadState("entities", id, clazz), clazz);
     }
 
 }
