@@ -23,40 +23,42 @@ public class TestDatabase {
         );
     }
 
-    public void recreateCollectionTable() {
-        jdbcTemplate.execute("drop table if exists entities");
-        jdbcTemplate.execute(
-            "create table entities\n" +
-                "(\n" +
-                "    id        varchar(50) not null primary key,\n" +
-                "    state     jsonb       not null,\n" +
-                "    timestamp timestamp   not null\n" +
-                ")"
-        );
-    }
-
-    public Map<String, Object> getSavedAggregateState() {
-        return jdbcTemplate.queryForMap("select * from entities");
-    }
-
     public JdbcOperations jdbcTemplate() {
         return jdbcTemplate;
     }
 
-    public void recreateCollectionTableWithPrimaryKey() {
-        jdbcTemplate.execute("drop table if exists entities");
-        jdbcTemplate.execute(
-            "create table entities\n" +
-                "(\n" +
-                "    id        varchar(50) not null,\n" +
-                "    state     jsonb       not null,\n" +
-                "    timestamp timestamp   not null\n" +
-                ")"
+    public void recreateCollectionTable(String collection) {
+        jdbcTemplate.execute("drop table if exists " + collection);
+        jdbcTemplate.execute("" +
+            "create table " + collection + "\n" +
+            "(\n" +
+            "    id        varchar(50) not null primary key,\n" +
+            "    state     jsonb       not null,\n" +
+            "    timestamp timestamp   not null\n" +
+            ")"
         );
     }
 
-    public void addTestData(String id, String state, Instant timestamp) {
-        jdbcTemplate.update("insert into entities values(?, ? ::jsonb, ?)", id, state, Timestamp.from(timestamp));
+    public Map<String, Object> getSavedAggregateState(String collection) {
+        return jdbcTemplate.queryForMap("select * from " + collection);
+    }
+
+    public void recreateCollectionTableWithoutPrimaryKey(String collection) {
+        jdbcTemplate.execute("drop table if exists " + collection);
+        jdbcTemplate.execute("" +
+            "create table " + collection + "\n" +
+            "(\n" +
+            "    id        varchar(50) not null,\n" +
+            "    state     jsonb       not null,\n" +
+            "    timestamp timestamp   not null\n" +
+            ")"
+        );
+    }
+
+    public void addTestData(String collection, String id, String state, Instant timestamp) {
+        jdbcTemplate.update(
+            "insert into " + collection + " values(?, ? ::jsonb, ?)", id, state, Timestamp.from(timestamp)
+        );
     }
 
 }

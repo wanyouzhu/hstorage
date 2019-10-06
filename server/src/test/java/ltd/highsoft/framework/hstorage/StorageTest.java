@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class StorageTest {
 
+    public static final String COLLECTION = "entities";
     private TestDatabase testDatabase;
     private TimeService timeService;
     private Storage storage;
@@ -17,7 +18,7 @@ class StorageTest {
     @BeforeEach
     void setUp() {
         testDatabase = new TestDatabase();
-        testDatabase.recreateCollectionTable();
+        testDatabase.recreateCollectionTable(COLLECTION);
         timeService = new FixedTimeService(Instant.now());
         storage = new Storage(new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
     }
@@ -26,7 +27,7 @@ class StorageTest {
     void should_be_able_to_save_aggregate_state_into_database() {
         TestAggregate testAggregate = new TestAggregate("0001", "Van");
         storage.save(testAggregate);
-        Map<String, Object> loaded = testDatabase.getSavedAggregateState();
+        Map<String, Object> loaded = testDatabase.getSavedAggregateState(COLLECTION);
         assertThat(loaded.get("id")).isEqualTo("0001");
         assertThat(loaded.get("state").toString()).isEqualTo("{\"id\": \"0001\", \"name\": \"Van\"}");
         assertThat(loaded.get("timestamp")).isEqualTo(Timestamp.from(timeService.now()));
