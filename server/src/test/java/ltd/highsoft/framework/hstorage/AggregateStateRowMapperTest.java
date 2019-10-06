@@ -23,7 +23,7 @@ class AggregateStateRowMapperTest {
         when(resultSet.getString("id")).thenReturn(ID);
         when(resultSet.getString("state")).thenReturn(STATE);
         when(resultSet.getTimestamp("timestamp")).thenReturn(TIMESTAMP);
-        mapper = new AggregateStateRowMapper();
+        mapper = new AggregateStateRowMapper("entities");
     }
 
     @Test

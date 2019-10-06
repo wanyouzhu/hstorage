@@ -38,7 +38,7 @@ public class JdbcStatePersister implements StatePersister {
     @Override
     public AggregateState loadState(String collection, String id, Class<?> clazz) {
         try {
-            return jdbcTemplate.queryForObject(getLoadCommand(), getLoadArgs(id), new AggregateStateRowMapper());
+            return jdbcTemplate.queryForObject(getLoadCommand(), getLoadArgs(id), new AggregateStateRowMapper(collection));
         } catch (EmptyResultDataAccessException e) {
             throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
         } catch (IncorrectResultSizeDataAccessException e) {
