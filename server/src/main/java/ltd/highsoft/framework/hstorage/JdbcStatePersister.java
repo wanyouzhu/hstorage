@@ -1,31 +1,35 @@
 package ltd.highsoft.framework.hstorage;
 
+import com.google.common.collect.ImmutableMap;
 import org.springframework.dao.*;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.namedparam.*;
 
 import java.sql.*;
 
 public class JdbcStatePersister implements StatePersister {
 
-    private final JdbcOperations jdbcTemplate;
+    private final NamedParameterJdbcOperations jdbcTemplate;
 
     public JdbcStatePersister(JdbcOperations jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        this.jdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
     }
 
     @Override
     public void saveState(AggregateState state) {
-        String sql = "insert into entities (id, state, timestamp) values (?, ?, ?) on conflict(id) do update set state = ?, timestamp = ?";
-        Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp()), state.content(), Timestamp.from(state.timestamp())};
-        int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP, Types.OTHER, Types.TIMESTAMP};
-        jdbcTemplate.update(sql, args, types);
+        String sql = "insert into entities (id, state, timestamp) values (:id, :state, :timestamp) on conflict(id) do update set state = :state, timestamp = :timestamp";
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("id", state.id());
+        parameterSource.addValue("state", state.content(), Types.OTHER);
+        parameterSource.addValue("timestamp", Timestamp.from(state.timestamp()));
+        jdbcTemplate.update(sql, parameterSource);
     }
 
     @Override
     public AggregateState loadState(String id, Class<?> clazz) {
         try {
-            String sql = "select id, state, timestamp from entities where id = ?";
-            return jdbcTemplate.queryForObject(sql, new AggregateStateRowMapper(), id);
+            String sql = "select id, state, timestamp from entities where id = :id";
+            return jdbcTemplate.queryForObject(sql, ImmutableMap.of("id", id), new AggregateStateRowMapper());
         } catch (EmptyResultDataAccessException e) {
             throw new AggregateNotFoundException("Aggregate '" + id + "' of type '" + clazz.getName() + "' does not exist!");
         } catch (IncorrectResultSizeDataAccessException e) {
