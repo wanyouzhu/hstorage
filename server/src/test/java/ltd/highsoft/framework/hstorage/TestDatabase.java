@@ -4,22 +4,24 @@ import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 public class TestDatabase {
-    JdbcOperations jdbcTemplate;
+
+    private JdbcOperations jdbcTemplate;
 
     public TestDatabase() {
-        this.jdbcTemplate = new JdbcTemplate(TestDatabase.createTestDataSource());
+        this.jdbcTemplate = new JdbcTemplate(createTestDataSource());
     }
 
-    public static DataSource createTestDataSource() {
+    private static DataSource createTestDataSource() {
         return new SingleConnectionDataSource(
             "jdbc:postgresql://localhost:5432/hkeeper",
             "postgres", "postgres", false
         );
     }
 
-    public void recreateCollectionTable(JdbcOperations jdbcTemplate) {
+    public void recreateCollectionTable() {
         jdbcTemplate.execute("drop table if exists entities");
         jdbcTemplate.execute(
             "create table entities\n" +
@@ -30,4 +32,13 @@ public class TestDatabase {
                 ")"
         );
     }
+
+    public Map<String, Object> getSavedAggregateState() {
+        return jdbcTemplate.queryForMap("select * from entities");
+    }
+
+    public JdbcOperations jdbcTemplate() {
+        return jdbcTemplate;
+    }
+
 }
