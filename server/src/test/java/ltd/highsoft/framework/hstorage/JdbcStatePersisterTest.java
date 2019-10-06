@@ -40,6 +40,16 @@ class JdbcStatePersisterTest {
     }
 
     @Test
+    void should_update_state_if_state_exists_in_database_during_saving() {
+        AggregateState state = new AggregateState("one", "{\"id\": \"one\"}", Instant.EPOCH);
+        persister.saveState(state);
+        AggregateState newState = new AggregateState("one", "{\"id\": \"two\"}", Instant.parse("2019-01-01T11:22:33Z"));
+        persister.saveState(newState);
+        AggregateState loaded = persister.loadState("one", TestAggregate.class);
+        assertThat(loaded).isEqualToComparingFieldByField(newState);
+    }
+
+    @Test
     void should_fail_if_aggregate_state_not_found_in_database() {
         Throwable thrown = catchThrowable(() -> persister.loadState("nothing", TestAggregate.class));
         assertThat(thrown).isInstanceOf(AggregateNotFoundException.class);

@@ -15,9 +15,9 @@ public class JdbcStatePersister implements StatePersister {
 
     @Override
     public void saveState(AggregateState state) {
-        String sql = "insert into entities (id, state, timestamp) values (?, ?, ?)";
-        Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp())};
-        int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP};
+        String sql = "insert into entities (id, state, timestamp) values (?, ?, ?) on conflict(id) do update set state = ?, timestamp = ?";
+        Object[] args = {state.id(), state.content(), Timestamp.from(state.timestamp()), state.content(), Timestamp.from(state.timestamp())};
+        int[] types = {Types.CHAR, Types.OTHER, Types.TIMESTAMP, Types.OTHER, Types.TIMESTAMP};
         jdbcTemplate.update(sql, args, types);
     }
 
