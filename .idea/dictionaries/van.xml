@@ -7,6 +7,7 @@
       <w>hstore</w>
       <w>persister</w>
       <w>postgresql</w>
+      <w>unmarshallable</w>
     </words>
   </dictionary>
 </component>
