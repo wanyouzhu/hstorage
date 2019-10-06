@@ -9,6 +9,13 @@ import static org.assertj.core.api.Assertions.*;
 class AggregateStateTest {
 
     @Test
+    void should_reject_blank_collection_while_constructing() {
+        Throwable thrown = catchThrowable(() -> new AggregateState("", "one", "{}", Instant.now()));
+        assertThat(thrown).isInstanceOf(MalformedDataException.class);
+        assertThat(thrown).hasMessage("Aggregate collection is missing!");
+    }
+
+    @Test
     void should_reject_blank_id_while_constructing() {
         Throwable thrown = catchThrowable(() -> new AggregateState("entities", "", "{}", Instant.now()));
         assertThat(thrown).isInstanceOf(MalformedDataException.class);

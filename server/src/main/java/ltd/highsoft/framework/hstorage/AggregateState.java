@@ -20,9 +20,16 @@ public class AggregateState {
     }
 
     private void validate() {
+        validateCollection();
         validateId();
         validateState();
         validateTimestamp();
+    }
+
+    private void validateCollection() {
+        if (StringUtils.isBlank(collection)) {
+            throw new MalformedDataException("Aggregate collection is missing!");
+        }
     }
 
     private void validateId() {
