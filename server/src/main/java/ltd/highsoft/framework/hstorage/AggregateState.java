@@ -17,13 +17,6 @@ public class AggregateState {
         validate();
     }
 
-    public AggregateState(String id, String state, Instant timestamp) {
-        this.id = id;
-        this.state = state;
-        this.timestamp = timestamp;
-        validate();
-    }
-
     private void validate() {
         validateId();
         validateState();

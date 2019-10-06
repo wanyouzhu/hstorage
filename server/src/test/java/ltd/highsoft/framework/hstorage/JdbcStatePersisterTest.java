@@ -23,7 +23,7 @@ class JdbcStatePersisterTest {
 
     @Test
     void should_be_able_to_save_state_to_database() {
-        AggregateState state = new AggregateState("one", "{\"id\": \"one\"}", Instant.EPOCH);
+        AggregateState state = new AggregateState("entities", "one", "{\"id\": \"one\"}", Instant.EPOCH);
         persister.saveState("entities", state);
         Map<String, Object> loaded = testDatabase.getSavedAggregateState();
         assertThat(loaded.get("id")).isEqualTo("one");
@@ -33,7 +33,7 @@ class JdbcStatePersisterTest {
 
     @Test
     void should_be_able_to_load_state_from_database() {
-        AggregateState state = new AggregateState("one", "{\"id\": \"one\"}", Instant.EPOCH);
+        AggregateState state = new AggregateState("entities", "one", "{\"id\": \"one\"}", Instant.EPOCH);
         persister.saveState("entities", state);
         AggregateState loaded = persister.loadState("entities", "one", TestAggregate.class);
         assertThat(loaded).isEqualToComparingFieldByField(state);
@@ -41,9 +41,9 @@ class JdbcStatePersisterTest {
 
     @Test
     void should_update_state_if_state_exists_in_database_during_saving() {
-        AggregateState state = new AggregateState("one", "{\"id\": \"one\"}", Instant.EPOCH);
+        AggregateState state = new AggregateState("entities", "one", "{\"id\": \"one\"}", Instant.EPOCH);
         persister.saveState("entities", state);
-        AggregateState newState = new AggregateState("one", "{\"id\": \"two\"}", Instant.parse("2019-01-01T11:22:33Z"));
+        AggregateState newState = new AggregateState("entities", "one", "{\"id\": \"two\"}", Instant.parse("2019-01-01T11:22:33Z"));
         persister.saveState("entities", newState);
         AggregateState loaded = persister.loadState("entities", "one", TestAggregate.class);
         assertThat(loaded).isEqualToComparingFieldByField(newState);

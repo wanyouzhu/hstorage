@@ -29,7 +29,8 @@ class AggregateStateRowMapperTest {
     @Test
     void should_be_able_to_map_row_to_aggregate_state() throws SQLException {
         AggregateState aggregateState = mapper.mapRow(resultSet, 1);
-        assertThat(aggregateState).isEqualToComparingFieldByField(new AggregateState(ID, STATE, TIMESTAMP.toInstant()));
+        AggregateState expect = new AggregateState("entities", ID, STATE, TIMESTAMP.toInstant());
+        assertThat(aggregateState).isEqualToComparingFieldByField(expect);
     }
 
 }

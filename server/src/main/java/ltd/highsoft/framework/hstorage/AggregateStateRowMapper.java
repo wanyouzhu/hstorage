@@ -8,17 +8,15 @@ public class AggregateStateRowMapper implements RowMapper<AggregateState> {
 
     private final String collection;
 
-    public AggregateStateRowMapper() {
-        this.collection = "fixme";
-    }
-
     public AggregateStateRowMapper(String collection) {
         this.collection = collection;
     }
 
     @Override
     public AggregateState mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new AggregateState(rs.getString("id"), rs.getString("state"), rs.getTimestamp("timestamp").toInstant());
+        return new AggregateState(
+            collection, rs.getString("id"), rs.getString("state"), rs.getTimestamp("timestamp").toInstant()
+        );
     }
 
 }
