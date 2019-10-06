@@ -3,23 +3,29 @@ package ltd.highsoft.framework.hstorage;
 public class Storage {
 
     private final AggregateMarshaller marshaller;
-    private final AggregateMapper mapper;
+    private final AggregateMapping mapping;
     private final StatePersister persister;
     private final TimeService timeService;
 
     public Storage(StatePersister persister, TimeService timeService) {
         this.marshaller = new AggregateMarshaller();
-        this.mapper = new AggregateMapper(timeService);
+        this.mapping = new AggregateMapping();
         this.persister = persister;
         this.timeService = timeService;
     }
 
     public void save(Object aggregate) {
-        persister.saveState(mapper.mapToState(aggregate));
+        persister.saveState(buildAggregateState(aggregate));
+    }
+
+    private AggregateState buildAggregateState(Object aggregate) {
+        return new AggregateState(
+            "entities", mapping.getIdOf(aggregate), marshaller.marshal(aggregate), timeService.now()
+        );
     }
 
     public <T> T load(String id, Class<T> clazz) {
-        return mapper.mapToAggregate(persister.loadState("entities", id), clazz);
+        return marshaller.unmarshal(persister.loadState("entities", id).content(), clazz);
     }
 
 }
