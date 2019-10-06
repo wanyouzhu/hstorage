@@ -15,7 +15,7 @@ public class Storage {
     }
 
     public <T> T load(String id, Class<T> clazz) {
-        return mapper.mapToAggregate(persister.loadState("entities", id, clazz), clazz);
+        return mapper.mapToAggregate(persister.loadState("entities", id), clazz);
     }
 
 }
