@@ -49,17 +49,16 @@ public class AggregateMapping {
         return entries.get(aggregateClass).collection();
     }
 
-    public Class<?> mappingClassOf(Class<?> aggregateClass) {
-        ensureMappingExisted(aggregateClass);
-        return entries.get(aggregateClass).mappingClass();
-    }
-
     private void ensureMappingExisted(Class<?> aggregateClass) {
         if (!entries.containsKey(aggregateClass)) throw createMissingMappingException(aggregateClass);
     }
 
     private MappingException createMissingMappingException(Class<?> aggregateClass) {
         return new MappingException("Mapping not found for aggregate class '" + aggregateClass.getName() + "'!");
+    }
+
+    public Collection<MappingEntry>  entries() {
+        return entries.values();
     }
 
 }

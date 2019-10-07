@@ -10,9 +10,10 @@ class AggregateMappingTest {
 
     @Test
     void should_be_able_to_specify_mapping_entries() {
-        AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
+        ImmutableList<MappingEntry> entries = ImmutableList.of(new MappingEntry(TestAggregateMapping.class));
+        AggregateMapping mapping = new AggregateMapping(entries);
         assertThat(mapping.collectionOf(TestAggregate.class)).isEqualTo("test_aggregates");
-        assertThat(mapping.mappingClassOf(TestAggregate.class)).isEqualTo(TestAggregateMapping.class);
+        assertThat(ImmutableList.copyOf(mapping.entries())).isEqualTo(entries);
     }
 
     @Test
@@ -35,14 +36,6 @@ class AggregateMappingTest {
     void should_throw_mapping_exception_if_no_mapping_entry_present_while_resolving_collection() {
         AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
         Throwable thrown = catchThrowable(() -> mapping.collectionOf(String.class));
-        assertThat(thrown).isInstanceOf(MappingException.class);
-        assertThat(thrown).hasMessage("Mapping not found for aggregate class 'java.lang.String'!");
-    }
-
-    @Test
-    void should_throw_mapping_exception_if_no_mapping_entry_present_while_resolving_mapping_class() {
-        AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
-        Throwable thrown = catchThrowable(() -> mapping.mappingClassOf(String.class));
         assertThat(thrown).isInstanceOf(MappingException.class);
         assertThat(thrown).hasMessage("Mapping not found for aggregate class 'java.lang.String'!");
     }
