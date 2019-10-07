@@ -42,4 +42,11 @@ class AggregateMappingTest {
         assertThat(thrown).hasMessage("Mapping not found for aggregate class 'java.lang.String'!");
     }
 
+    @Test
+    void should_throw_mapping_exception_if_no_mapping_entry_present_while_resolving_mapping_class() {
+        Throwable thrown = catchThrowable(() -> mapping.mappingClassOf(String.class));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Mapping not found for aggregate class 'java.lang.String'!");
+    }
+
 }
