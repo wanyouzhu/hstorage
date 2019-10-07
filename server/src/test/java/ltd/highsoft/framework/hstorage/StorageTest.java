@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class StorageTest {
 
-    public static final String COLLECTION = "entities";
+    private static final String COLLECTION = "entities";
     private TestDatabase testDatabase;
     private TimeService timeService;
     private Storage storage;
@@ -20,7 +20,7 @@ class StorageTest {
         testDatabase = new TestDatabase();
         testDatabase.recreateCollectionTable(COLLECTION);
         timeService = new FixedTimeService(Instant.now());
-        storage = new Storage(new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
+        storage = new Storage(new AggregateMapping(), new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
     }
 
     @Test

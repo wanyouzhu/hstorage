@@ -23,14 +23,14 @@ class AggregateStateTest {
     }
 
     @Test
-    void should_reject_blank_state_while_construction() {
+    void should_reject_blank_state_while_constructing() {
         Throwable thrown = catchThrowable(() -> new AggregateState("entities", "one", "", Instant.now()));
         assertThat(thrown).isInstanceOf(MalformedDataException.class);
         assertThat(thrown).hasMessage("Aggregate state is missing!");
     }
 
     @Test
-    void should_reject_null_timestamp_while_construction() {
+    void should_reject_null_timestamp_while_constructing() {
         Throwable thrown = catchThrowable(() -> new AggregateState("entities", "one", "{}", null));
         assertThat(thrown).isInstanceOf(MalformedDataException.class);
         assertThat(thrown).hasMessage("Aggregate timestamp is missing!");
