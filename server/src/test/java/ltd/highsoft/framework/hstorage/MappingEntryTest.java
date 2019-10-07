@@ -28,5 +28,11 @@ class MappingEntryTest {
         assertThat(thrown).hasMessage("Invalid mapping class 'ltd.highsoft.framework.hstorage.EmptyCollectionMapping', collection of '@Aggregate' can not be empty!");
     }
 
-}
+    @Test
+    void should_be_equal_to_others_which_has_the_same_mapping_class() {
+        MappingEntry one = new MappingEntry(TestAggregateMapping.class);
+        MappingEntry two = new MappingEntry(TestAggregateMapping.class);
+        assertThat(one).isEqualTo(two);
+    }
 
+}

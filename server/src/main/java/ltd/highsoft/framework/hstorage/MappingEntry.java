@@ -3,6 +3,8 @@ package ltd.highsoft.framework.hstorage;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import java.util.Objects;
+
 public class MappingEntry {
 
     private final Class<?> mappingClass;
@@ -49,6 +51,19 @@ public class MappingEntry {
 
     public Class<?> mappingClass() {
         return mappingClass;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MappingEntry entry = (MappingEntry) o;
+        return mappingClass.equals(entry.mappingClass);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mappingClass);
     }
 
 }

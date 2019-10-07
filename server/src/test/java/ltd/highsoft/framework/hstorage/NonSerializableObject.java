@@ -1,6 +1,7 @@
 package ltd.highsoft.framework.hstorage;
 
-public class NonSerializableObject {
+@SuppressWarnings("unused")
+class NonSerializableObject {
     private String id = "test";
     private Object object = new Object();
 }
