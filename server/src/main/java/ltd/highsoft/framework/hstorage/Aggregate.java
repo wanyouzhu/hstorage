@@ -2,8 +2,9 @@ package ltd.highsoft.framework.hstorage;
 
 import java.lang.annotation.*;
 
-@Inherited
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface Aggregate {
 
     Class<?> aggregateClass();
