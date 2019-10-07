@@ -1,5 +1,6 @@
 package ltd.highsoft.framework.hstorage;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.*;
 
 import java.sql.Timestamp;
@@ -20,7 +21,8 @@ class StorageTest {
         testDatabase = new TestDatabase();
         testDatabase.recreateCollectionTable(COLLECTION);
         timeService = new FixedTimeService(Instant.now());
-        storage = new Storage(new AggregateMapping(), new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
+        AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
+        storage = new Storage(mapping, new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
     }
 
     @Test

@@ -33,6 +33,7 @@ class MappingEntryTest {
         MappingEntry one = new MappingEntry(TestAggregateMapping.class);
         MappingEntry two = new MappingEntry(TestAggregateMapping.class);
         assertThat(one).isEqualTo(two);
+        assertThat(one.hashCode()).isEqualTo(two.hashCode());
     }
 
 }

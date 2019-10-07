@@ -1,5 +1,6 @@
 package ltd.highsoft.framework.hstorage;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -11,7 +12,13 @@ class AggregateMappingTest {
 
     @BeforeEach
     void setUp() {
-        mapping = new AggregateMapping();
+        mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
+    }
+
+    @Test
+    void should_be_able_to_specify_mapping_entries() {
+        assertThat(mapping.getCollectionOf(TestAggregate.class)).isEqualTo("test_aggregates");
+        assertThat(mapping.getMappingClassOf(TestAggregate.class)).isEqualTo(TestAggregateMapping.class);
     }
 
     @Test
