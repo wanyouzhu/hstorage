@@ -42,7 +42,7 @@ public class JdbcStatePersister implements StatePersister {
         } catch (EmptyResultDataAccessException e) {
             throw new AggregateNotFoundException("Aggregate '" + id + "' not found in collection '" + collection + "'!");
         } catch (IncorrectResultSizeDataAccessException e) {
-            throw new MalformedDataException("Multiple rows associated to the key '" + id + "'!", e);
+            throw new MalformedDataException("Multiple rows associated with the key '" + id + "'!", e);
         }
     }
 

@@ -64,7 +64,7 @@ class JdbcStatePersisterTest {
         testDatabase.addTestData(COLLECTION, "one", "{\"id\": \"one\"}", Instant.EPOCH);
         Throwable thrown = catchThrowable(() -> persister.loadState(COLLECTION, "one"));
         assertThat(thrown).isInstanceOf(MalformedDataException.class);
-        assertThat(thrown).hasMessage("Multiple rows associated to the key 'one'!");
+        assertThat(thrown).hasMessage("Multiple rows associated with the key 'one'!");
         assertThat(thrown).hasCauseInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 

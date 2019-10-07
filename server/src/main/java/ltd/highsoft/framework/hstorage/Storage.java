@@ -20,7 +20,7 @@ public class Storage {
 
     private AggregateState buildAggregateState(Object aggregate) {
         return new AggregateState(
-            "entities", mapping.getIdOf(aggregate), marshaller.marshal(aggregate), timeService.now()
+            "entities", mapping.idOf(aggregate), marshaller.marshal(aggregate), timeService.now()
         );
     }
 
