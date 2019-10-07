@@ -8,7 +8,7 @@ public class Storage {
     private final TimeService timeService;
 
     public Storage(AggregateMapping mapping, StatePersister persister, TimeService timeService) {
-        this.marshaller = new AggregateMarshaller();
+        this.marshaller = new AggregateMarshaller(mapping);
         this.mapping = mapping;
         this.persister = persister;
         this.timeService = timeService;

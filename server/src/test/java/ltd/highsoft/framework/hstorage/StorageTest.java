@@ -31,7 +31,7 @@ class StorageTest {
         storage.save(testAggregate);
         Map<String, Object> loaded = testDatabase.getSavedAggregateState(COLLECTION);
         assertThat(loaded.get("id")).isEqualTo("0001");
-        assertThat(loaded.get("state").toString()).isEqualTo("{\"id\": \"0001\", \"name\": \"Van\"}");
+        assertThat(loaded.get("state").toString()).isEqualTo("{\"id\": \"0001\", \"name\": \"Van\", \"@type\": \"aggregate\"}");
         assertThat(loaded.get("timestamp")).isEqualTo(Timestamp.from(timeService.now()));
     }
 

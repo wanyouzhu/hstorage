@@ -2,6 +2,7 @@ package ltd.highsoft.framework.hstorage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -15,12 +16,13 @@ class AggregateMarshallerTest {
 
     @BeforeEach
     void setUp() {
-        marshaller = new AggregateMarshaller();
+        AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
+        marshaller = new AggregateMarshaller(mapping);
     }
 
     @Test
     void should_be_able_to_marshal_aggregate_to_string_by_fields() {
-        String expect = "{\"id\":\"one\",\"name\":\"van\"}";
+        String expect = "{\"@type\":\"aggregate\",\"id\":\"one\",\"name\":\"van\"}";
         assertThat(marshaller.marshal(new TestAggregate("one", "van"))).isEqualTo(expect);
     }
 
