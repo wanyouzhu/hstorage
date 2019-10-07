@@ -2,7 +2,7 @@ package ltd.highsoft.framework.hstorage;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 class MappingEntryTest {
 
@@ -14,4 +14,19 @@ class MappingEntryTest {
         assertThat(entry.mappingClass()).isEqualTo(TestAggregateMapping.class);
     }
 
+    @Test
+    void should_reject_mapping_classes_without_aggregate_annotation() {
+        Throwable thrown = catchThrowable(() -> new MappingEntry(MappingEntryTest.class));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Invalid mapping class 'ltd.highsoft.framework.hstorage.MappingEntryTest', no '@Aggregate' annotation present!");
+    }
+
+    @Test
+    void should_reject_mapping_classes_which_has_empty_collection() {
+        Throwable thrown = catchThrowable(() -> new MappingEntry(EmptyCollectionMapping.class));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Invalid mapping class 'ltd.highsoft.framework.hstorage.EmptyCollectionMapping', collection of '@Aggregate' can not be empty!");
+    }
+
 }
+

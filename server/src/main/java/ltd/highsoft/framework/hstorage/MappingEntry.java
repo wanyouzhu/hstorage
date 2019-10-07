@@ -1,5 +1,6 @@
 package ltd.highsoft.framework.hstorage;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
 public class MappingEntry {
@@ -9,10 +10,33 @@ public class MappingEntry {
     private final Class<?> aggregateClass;
 
     public MappingEntry(Class<?> mappingClass) {
-        Aggregate annotation = AnnotationUtils.findAnnotation(mappingClass, Aggregate.class);
+        Aggregate annotation = getAggregateAnnotation(mappingClass);
         this.mappingClass = mappingClass;
-        this.collection = annotation.collection();
+        this.collection = getCollectionFromAnnotation(annotation);
         this.aggregateClass = annotation.aggregateClass();
+    }
+
+    private Aggregate getAggregateAnnotation(Class<?> mappingClass) {
+        Aggregate annotation = AnnotationUtils.findAnnotation(mappingClass, Aggregate.class);
+        if (annotation == null) throw createMappingException(mappingClass);
+        return annotation;
+    }
+
+    private MappingException createMappingException(Class<?> mappingClass) {
+        return new MappingException(
+            "Invalid mapping class '" + mappingClass.getName() + "', no '@Aggregate' annotation present!"
+        );
+    }
+
+    private String getCollectionFromAnnotation(Aggregate annotation) {
+        if (StringUtils.isBlank(annotation.collection())) throw createMappingExceptionForBlankCollection(mappingClass);
+        return annotation.collection();
+    }
+
+    private MappingException createMappingExceptionForBlankCollection(Class<?> mappingClass) {
+        return new MappingException(
+            "Invalid mapping class '" + mappingClass.getName() + "', collection of '@Aggregate' can not be empty!"
+        );
     }
 
     public Class<?> aggregateClass() {
