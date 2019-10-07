@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class StorageTest {
 
-    private static final String COLLECTION = "entities";
+    private static final String COLLECTION = "test_aggregates";
     private TestDatabase testDatabase;
     private TimeService timeService;
     private Storage storage;

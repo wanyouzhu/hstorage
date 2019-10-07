@@ -20,12 +20,13 @@ public class Storage {
 
     private AggregateState buildAggregateState(Object aggregate) {
         return new AggregateState(
-            "entities", mapping.idOf(aggregate), marshaller.marshal(aggregate), timeService.now()
+            mapping.collectionOf(aggregate.getClass()), mapping.idOf(aggregate),
+            marshaller.marshal(aggregate), timeService.now()
         );
     }
 
     public <T> T load(String id, Class<T> clazz) {
-        return marshaller.unmarshal(persister.loadState("entities", id).content(), clazz);
+        return marshaller.unmarshal(persister.loadState(mapping.collectionOf(clazz), id).content(), clazz);
     }
 
 }
