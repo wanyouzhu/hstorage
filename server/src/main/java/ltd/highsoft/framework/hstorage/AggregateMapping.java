@@ -1,17 +1,36 @@
 package ltd.highsoft.framework.hstorage;
 
+import com.google.common.collect.Maps;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AggregateMapping {
 
-    private final Map<Class<?>, MappingEntry> entries;
+    private final Map<Class<?>, MappingEntry> entries = Maps.newHashMap();
 
     public AggregateMapping(List<MappingEntry> entries) {
-        this.entries = entries.stream().collect(Collectors.toMap(MappingEntry::aggregateClass, x -> x));
+        entries.forEach(this::addEntry);
+    }
+
+    private void addEntry(MappingEntry mappingEntry) {
+        checkForDuplicatedEntry(mappingEntry);
+        entries.put(mappingEntry.aggregateClass(), mappingEntry);
+    }
+
+    private void checkForDuplicatedEntry(MappingEntry entry) {
+        MappingEntry existed = entries.get(entry.aggregateClass());
+        if (existed != null) {
+            throw createDuplicatedMappingException(entry.aggregateClass(), existed.mappingClass(), entry.mappingClass());
+        }
+    }
+
+    private MappingException createDuplicatedMappingException(Class<?> aClass, Class<?> mapping1, Class<?> mapping2) {
+        return new MappingException("" +
+            "Multiple mapping specified for aggregate class '" + aClass.getName() +
+            "': [" + mapping1.getName() + ", " + mapping2.getName() + "]"
+        );
     }
 
     public String idOf(Object aggregate) {
