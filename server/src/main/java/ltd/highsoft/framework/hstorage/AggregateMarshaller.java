@@ -6,20 +6,21 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class AggregateMarshaller {
 
     private final ObjectMapper mapper;
 
     public AggregateMarshaller(ModelMapping mapping) {
-        this.mapper = createMapper();
-        mapping.entries().forEach(x -> mapper.addMixIn(x.modelClass(), x.mappingClass()));
+        this.mapper = createMapper(mapping.entries());
     }
 
-    private ObjectMapper createMapper() {
+    private ObjectMapper createMapper(Collection<MappingEntry> entries) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new ParameterNamesModule());
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        entries.forEach(x -> mapper.addMixIn(x.modelClass(), x.mappingClass()));
         return mapper;
     }
 
