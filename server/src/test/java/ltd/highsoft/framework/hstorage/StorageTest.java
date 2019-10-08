@@ -21,7 +21,7 @@ class StorageTest {
         testDatabase = new TestDatabase();
         testDatabase.recreateCollectionTable(COLLECTION);
         timeService = new FixedTimeService(Instant.now());
-        AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
+        ModelMapping mapping = new ModelMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
         storage = new Storage(mapping, new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
     }
 

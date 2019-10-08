@@ -3,11 +3,11 @@ package ltd.highsoft.framework.hstorage;
 public class Storage {
 
     private final AggregateMarshaller marshaller;
-    private final AggregateMapping mapping;
+    private final ModelMapping mapping;
     private final StatePersister persister;
     private final TimeService timeService;
 
-    public Storage(AggregateMapping mapping, StatePersister persister, TimeService timeService) {
+    public Storage(ModelMapping mapping, StatePersister persister, TimeService timeService) {
         this.marshaller = new AggregateMarshaller(mapping);
         this.mapping = mapping;
         this.persister = persister;

@@ -8,11 +8,11 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class AggregateMapping {
+public class ModelMapping {
 
     private final Map<Class<?>, MappingEntry> entries = Maps.newHashMap();
 
-    public AggregateMapping(List<MappingEntry> entries) {
+    public ModelMapping(List<MappingEntry> entries) {
         entries.forEach(this::addEntry);
     }
 

@@ -16,7 +16,7 @@ class AggregateMarshallerTest {
 
     @BeforeEach
     void setUp() {
-        AggregateMapping mapping = new AggregateMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
+        ModelMapping mapping = new ModelMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
         marshaller = new AggregateMarshaller(mapping);
     }
 
