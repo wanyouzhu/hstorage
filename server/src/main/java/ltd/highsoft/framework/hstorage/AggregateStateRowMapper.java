@@ -2,7 +2,8 @@ package ltd.highsoft.framework.hstorage;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class AggregateStateRowMapper implements RowMapper<AggregateState> {
 

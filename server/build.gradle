@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'org.springframework.boot' version '2.1.8.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
@@ -12,7 +11,7 @@ configurations {
 
 dependencies {
     // Common dependencies.
-    implementation 'com.google.guava:guava:27.1-jre'
+    implementation 'com.google.guava:guava:28.1-jre'
 
     // Web dependencies.
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -34,8 +33,4 @@ dependencies {
 
     // Other dependencies
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-}
-
-test {
-    useJUnitPlatform()
 }

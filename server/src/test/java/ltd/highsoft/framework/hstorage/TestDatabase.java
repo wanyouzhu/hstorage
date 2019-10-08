@@ -1,6 +1,7 @@
 package ltd.highsoft.framework.hstorage;
 
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;

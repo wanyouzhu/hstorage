@@ -1,11 +1,15 @@
 package ltd.highsoft.framework.hstorage;
 
 import com.google.common.collect.ImmutableMap;
-import org.springframework.dao.*;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.namedparam.*;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.sql.*;
+import java.sql.Timestamp;
+import java.sql.Types;
 
 public class JdbcStatePersister implements StatePersister {
 
@@ -22,8 +26,8 @@ public class JdbcStatePersister implements StatePersister {
 
     private String getSaveCommand(AggregateState state) {
         return ("" +
-            "insert into " + state.collection() + " (id, state, timestamp) values (:id, :state, :timestamp) " +
-            "on conflict(id) do update set state = :state, timestamp = :timestamp"
+            "insert into " + state.collection() + " (id, state, timestamp) values (:id, :state, :timestamp) "
+            + "on conflict(id) do update set state = :state, timestamp = :timestamp"
         );
     }
 
@@ -40,7 +44,9 @@ public class JdbcStatePersister implements StatePersister {
         try {
             return jdbcTemplate.queryForObject(getLoadCommand(collection), getLoadArgs(id), getRowMapper(collection));
         } catch (EmptyResultDataAccessException e) {
-            throw new AggregateNotFoundException("Aggregate '" + id + "' not found in collection '" + collection + "'!");
+            throw new AggregateNotFoundException(
+                "Aggregate '" + id + "' not found in collection '" + collection + "'!"
+            );
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new MalformedDataException("Multiple rows associated with the key '" + id + "'!", e);
         }

@@ -3,10 +3,15 @@ package ltd.highsoft.framework.hstorage;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.google.common.collect.Maps;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.*;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ModelMapping {
 
@@ -41,14 +46,14 @@ public class ModelMapping {
         }
     }
 
-    private MappingException createDuplicatedMappingException(Class<?> aClass, Class<?> mapping1, Class<?> mapping2) {
+    private MappingException createDuplicatedMappingException(Class<?> aClass, Class<?>... mappings) {
         return new MappingException("" +
             "Multiple mapping specified for aggregate class '" + aClass.getName() +
-            "': [" + mapping1.getName() + ", " + mapping2.getName() + "]"
+            "': [" + Arrays.stream(mappings).map(Class::getName).collect(Collectors.joining(",")) + "]"
         );
     }
 
-    public String idOf(Object aggregate) {
+    public String idOf(final Object aggregate) {
         Field field = ReflectionUtils.findField(aggregate.getClass(), "id", String.class);
         if (field == null) throw createMissingIdException(aggregate);
         ReflectionUtils.makeAccessible(field);

@@ -1,12 +1,49 @@
 allprojects {
-    repositories {
-        jcenter()
-    }
+    apply plugin: 'idea'
 }
 
 subprojects {
+    apply plugin: 'java'
+
+    group = 'ltd.highsoft.hkeeper'
     version = '1.0'
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked"
+        options.compilerArgs << "-Xlint:deprecation"
+    }
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    apply from: "$rootDir/gradle/config/scripts/style.gradle"
+    apply from: "$rootDir/gradle/config/scripts/coverage.gradle"
+
+    coverage.excludePackages = [
+    ]
+
+    coverage.excludeClasses = [
+        "ltd.highsoft.hkeeper.App"
+    ]
+
+    style.excludePackages = [
+    ]
+
+    style.excludeClasses = [
+    ]
 }
+
+apply from: "$rootDir/gradle/config/scripts/idea.gradle"
 
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-parameters'
