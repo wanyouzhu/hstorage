@@ -13,7 +13,7 @@ public class AggregateMarshaller {
 
     public AggregateMarshaller(AggregateMapping mapping) {
         this.mapper = createMapper();
-        mapping.entries().forEach(x -> mapper.addMixIn(x.aggregateClass(), x.mappingClass()));
+        mapping.entries().forEach(x -> mapper.addMixIn(x.modelClass(), x.mappingClass()));
     }
 
     private ObjectMapper createMapper() {

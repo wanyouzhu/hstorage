@@ -1,6 +1,8 @@
 package ltd.highsoft.framework.hstorage;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.google.common.collect.Maps;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -16,13 +18,26 @@ public class AggregateMapping {
 
     private void addEntry(MappingEntry mappingEntry) {
         checkForDuplicatedEntry(mappingEntry);
-        entries.put(mappingEntry.aggregateClass(), mappingEntry);
+        entries.put(mappingEntry.modelClass(), mappingEntry);
+        addEntriesForSubClasses(mappingEntry);
+    }
+
+    private void addEntriesForSubClasses(MappingEntry mappingEntry) {
+        JsonSubTypes annotation = AnnotationUtils.findAnnotation(mappingEntry.mappingClass(), JsonSubTypes.class);
+        if (annotation == null) return;
+        for (JsonSubTypes.Type type : annotation.value()) {
+            MappingEntry existed = entries.get(type.value());
+            if (existed != null) {
+                throw createDuplicatedMappingException(type.value(), existed.mappingClass(), mappingEntry.mappingClass());
+            }
+            entries.put(type.value(), mappingEntry);
+        }
     }
 
     private void checkForDuplicatedEntry(MappingEntry entry) {
-        MappingEntry existed = entries.get(entry.aggregateClass());
+        MappingEntry existed = entries.get(entry.modelClass());
         if (existed != null) {
-            throw createDuplicatedMappingException(entry.aggregateClass(), existed.mappingClass(), entry.mappingClass());
+            throw createDuplicatedMappingException(entry.modelClass(), existed.mappingClass(), entry.mappingClass());
         }
     }
 
@@ -49,12 +64,12 @@ public class AggregateMapping {
         return entries.get(aggregateClass).collection();
     }
 
-    private void ensureMappingExisted(Class<?> aggregateClass) {
-        if (!entries.containsKey(aggregateClass)) throw createMissingMappingException(aggregateClass);
+    private void ensureMappingExisted(Class<?> modelClass) {
+        if (!entries.containsKey(modelClass)) throw createMissingMappingException(modelClass);
     }
 
-    private MappingException createMissingMappingException(Class<?> aggregateClass) {
-        return new MappingException("Mapping not found for aggregate class '" + aggregateClass.getName() + "'!");
+    private MappingException createMissingMappingException(Class<?> mocelClass) {
+        return new MappingException("Mapping not found for aggregate class '" + mocelClass.getName() + "'!");
     }
 
     public Collection<MappingEntry>  entries() {

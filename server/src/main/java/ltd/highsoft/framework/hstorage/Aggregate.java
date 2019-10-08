@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Aggregate {
 
-    Class<?> aggregateClass();
+    Class<?> modelClass();
 
     String collection();
 

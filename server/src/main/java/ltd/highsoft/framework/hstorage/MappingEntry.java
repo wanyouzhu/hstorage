@@ -9,13 +9,13 @@ public class MappingEntry {
 
     private final Class<?> mappingClass;
     private final String collection;
-    private final Class<?> aggregateClass;
+    private final Class<?> modelClass;
 
     public MappingEntry(Class<?> mappingClass) {
         Aggregate annotation = getAggregateAnnotation(mappingClass);
         this.mappingClass = mappingClass;
         this.collection = getCollectionFromAnnotation(annotation);
-        this.aggregateClass = annotation.aggregateClass();
+        this.modelClass = annotation.modelClass();
     }
 
     private Aggregate getAggregateAnnotation(Class<?> mappingClass) {
@@ -41,8 +41,8 @@ public class MappingEntry {
         );
     }
 
-    public Class<?> aggregateClass() {
-        return aggregateClass;
+    public Class<?> modelClass() {
+        return modelClass;
     }
 
     public String collection() {

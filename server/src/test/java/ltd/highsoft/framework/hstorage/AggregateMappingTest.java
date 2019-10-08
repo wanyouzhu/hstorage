@@ -51,4 +51,11 @@ class AggregateMappingTest {
         assertThat(thrown).hasMessageContaining("ltd.highsoft.framework.hstorage.AnotherTestAggregateMapping");
     }
 
+    @Test
+    void should_be_able_to_retrieve_collection_for_sub_classes() {
+        ImmutableList<MappingEntry> entries = ImmutableList.of(new MappingEntry(HierarchyAggregateMapping.class));
+        AggregateMapping mapping = new AggregateMapping(entries);
+        assertThat(mapping.collectionOf(DerivedAggregate.class)).isEqualTo("base_aggregates");
+    }
+
 }
