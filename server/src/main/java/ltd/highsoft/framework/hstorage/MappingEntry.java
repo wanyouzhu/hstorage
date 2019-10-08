@@ -11,20 +11,23 @@ public class MappingEntry {
     private final String collection;
     private final Class<?> modelClass;
 
-    public MappingEntry(Class<?> mappingClass) {
-        Aggregate annotation = getAggregateAnnotation(mappingClass);
+    private MappingEntry(Class<?> mappingClass, Aggregate annotation) {
         this.mappingClass = mappingClass;
         this.collection = getCollectionFromAnnotation(annotation);
         this.modelClass = annotation.modelClass();
     }
 
-    private Aggregate getAggregateAnnotation(Class<?> mappingClass) {
+    public static MappingEntry ofAggregate(Class<?> mappingClass) {
+        return new MappingEntry(mappingClass, getAggregateAnnotation(mappingClass));
+    }
+
+    private static Aggregate getAggregateAnnotation(Class<?> mappingClass) {
         Aggregate annotation = AnnotationUtils.findAnnotation(mappingClass, Aggregate.class);
         if (annotation == null) throw createMappingException(mappingClass);
         return annotation;
     }
 
-    private MappingException createMappingException(Class<?> mappingClass) {
+    private static MappingException createMappingException(Class<?> mappingClass) {
         return new MappingException(
             "Invalid mapping class '" + mappingClass.getName() + "', no '@Aggregate' annotation present!"
         );
