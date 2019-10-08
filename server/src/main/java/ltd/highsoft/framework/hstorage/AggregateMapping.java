@@ -17,8 +17,7 @@ public class AggregateMapping {
     }
 
     private void addEntry(MappingEntry mappingEntry) {
-        checkForDuplicatedEntry(mappingEntry);
-        entries.put(mappingEntry.modelClass(), mappingEntry);
+        addEntry(mappingEntry.modelClass(), mappingEntry);
         addEntriesForSubClasses(mappingEntry);
     }
 
@@ -26,18 +25,19 @@ public class AggregateMapping {
         JsonSubTypes annotation = AnnotationUtils.findAnnotation(mappingEntry.mappingClass(), JsonSubTypes.class);
         if (annotation == null) return;
         for (JsonSubTypes.Type type : annotation.value()) {
-            MappingEntry existed = entries.get(type.value());
-            if (existed != null) {
-                throw createDuplicatedMappingException(type.value(), existed.mappingClass(), mappingEntry.mappingClass());
-            }
-            entries.put(type.value(), mappingEntry);
+            addEntry(type.value(), mappingEntry);
         }
     }
 
-    private void checkForDuplicatedEntry(MappingEntry entry) {
-        MappingEntry existed = entries.get(entry.modelClass());
+    private void addEntry(Class<?> modelClass, MappingEntry mappingEntry) {
+        checkForDuplicatedEntry(modelClass, mappingEntry.mappingClass());
+        entries.put(modelClass, mappingEntry);
+    }
+
+    private void checkForDuplicatedEntry(Class<?> modelClass, Class<?> mappingClass) {
+        MappingEntry existed = entries.get(modelClass);
         if (existed != null) {
-            throw createDuplicatedMappingException(entry.modelClass(), existed.mappingClass(), entry.mappingClass());
+            throw createDuplicatedMappingException(modelClass, existed.mappingClass(), mappingClass);
         }
     }
 
@@ -72,7 +72,7 @@ public class AggregateMapping {
         return new MappingException("Mapping not found for aggregate class '" + mocelClass.getName() + "'!");
     }
 
-    public Collection<MappingEntry>  entries() {
+    public Collection<MappingEntry> entries() {
         return entries.values();
     }
 
