@@ -58,4 +58,13 @@ class ModelMappingTest {
         assertThat(mapping.collectionOf(DerivedAggregate.class)).isEqualTo("base_aggregates");
     }
 
+    @Test
+    void should_throw_exception_while_attempting_to_retrieve_collection_for_non_aggregate_mappings() {
+        ImmutableList<MappingEntry> entries = ImmutableList.of(MappingEntry.ofNonAggregate(TestNonAggregateMapping.class));
+        ModelMapping mapping = new ModelMapping(entries);
+        Throwable thrown = catchThrowable(() -> mapping.collectionOf(TestNonAggregate.class));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessageContaining("Class 'ltd.highsoft.framework.hstorage.TestNonAggregate' is mapped as a non-aggregate!");
+    }
+
 }

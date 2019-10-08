@@ -29,11 +29,18 @@ class MappingEntryTest {
     }
 
     @Test
-    void should_be_equal_to_others_which_has_the_same_mapping_class() {
-        MappingEntry one = MappingEntry.ofAggregate(TestAggregateMapping.class);
-        MappingEntry two = MappingEntry.ofAggregate(TestAggregateMapping.class);
-        assertThat(one).isEqualTo(two);
-        assertThat(one.hashCode()).isEqualTo(two.hashCode());
+    void should_be_able_to_construct_from_non_aggregate_mapping_class() {
+        MappingEntry entry = MappingEntry.ofNonAggregate(TestNonAggregateMapping.class);
+        assertThat(entry.modelClass()).isEqualTo(TestNonAggregate.class);
+        assertThat(entry.collection()).isEqualTo(null);
+        assertThat(entry.mappingClass()).isEqualTo(TestNonAggregateMapping.class);
+    }
+
+    @Test
+    void should_reject_mapping_classes_without_non_aggregate_annotation() {
+        Throwable thrown = catchThrowable(() -> MappingEntry.ofNonAggregate(MappingEntryTest.class));
+        assertThat(thrown).isInstanceOf(MappingException.class);
+        assertThat(thrown).hasMessage("Invalid mapping class 'ltd.highsoft.framework.hstorage.MappingEntryTest', no '@NonAggregate' annotation present!");
     }
 
 }

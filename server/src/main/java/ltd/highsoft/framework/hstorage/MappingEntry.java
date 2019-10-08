@@ -3,8 +3,6 @@ package ltd.highsoft.framework.hstorage;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import java.util.Objects;
-
 public class MappingEntry {
 
     private final Class<?> mappingClass;
@@ -17,19 +15,29 @@ public class MappingEntry {
         this.modelClass = annotation.modelClass();
     }
 
+    private MappingEntry(Class<?> mappingClass, NonAggregate annotation) {
+        this.mappingClass = mappingClass;
+        this.collection = null;
+        this.modelClass = annotation.modelClass();
+    }
+
     public static MappingEntry ofAggregate(Class<?> mappingClass) {
         return new MappingEntry(mappingClass, getAggregateAnnotation(mappingClass));
     }
 
+    public static MappingEntry ofNonAggregate(Class<?> mappingClass) {
+        return new MappingEntry(mappingClass, getNonAggregateAnnotation(mappingClass));
+    }
+
     private static Aggregate getAggregateAnnotation(Class<?> mappingClass) {
         Aggregate annotation = AnnotationUtils.findAnnotation(mappingClass, Aggregate.class);
-        if (annotation == null) throw createMappingException(mappingClass);
+        if (annotation == null) throw createMappingException(mappingClass, "@Aggregate");
         return annotation;
     }
 
-    private static MappingException createMappingException(Class<?> mappingClass) {
+    private static MappingException createMappingException(Class<?> mappingClass, String annotation) {
         return new MappingException(
-            "Invalid mapping class '" + mappingClass.getName() + "', no '@Aggregate' annotation present!"
+            "Invalid mapping class '" + mappingClass.getName() + "', no '" + annotation + "' annotation present!"
         );
     }
 
@@ -44,6 +52,12 @@ public class MappingEntry {
         );
     }
 
+    private static NonAggregate getNonAggregateAnnotation(Class<?> mappingClass) {
+        NonAggregate annotation = AnnotationUtils.findAnnotation(mappingClass, NonAggregate.class);
+        if (annotation == null) throw createMappingException(mappingClass, "@NonAggregate");
+        return annotation;
+    }
+
     public Class<?> modelClass() {
         return modelClass;
     }
@@ -54,19 +68,6 @@ public class MappingEntry {
 
     public Class<?> mappingClass() {
         return mappingClass;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MappingEntry entry = (MappingEntry) o;
-        return mappingClass.equals(entry.mappingClass);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(mappingClass);
     }
 
 }

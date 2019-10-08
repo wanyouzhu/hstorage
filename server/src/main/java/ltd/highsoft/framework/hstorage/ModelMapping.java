@@ -3,7 +3,7 @@ package ltd.highsoft.framework.hstorage;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.google.common.collect.Maps;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ReflectionUtils;
+import org.springframework.util.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -61,15 +61,21 @@ public class ModelMapping {
 
     public String collectionOf(Class<?> aggregateClass) {
         ensureMappingExisted(aggregateClass);
-        return entries.get(aggregateClass).collection();
+        String collection = entries.get(aggregateClass).collection();
+        if (StringUtils.isEmpty(collection)) throw createWrongMappingException(aggregateClass);
+        return collection;
+    }
+
+    private MappingException createWrongMappingException(Class<?> modelClass) {
+        return new MappingException("Class '" + modelClass.getName() + "' is mapped as a non-aggregate!");
     }
 
     private void ensureMappingExisted(Class<?> modelClass) {
         if (!entries.containsKey(modelClass)) throw createMissingMappingException(modelClass);
     }
 
-    private MappingException createMissingMappingException(Class<?> mocelClass) {
-        return new MappingException("Mapping not found for aggregate class '" + mocelClass.getName() + "'!");
+    private MappingException createMissingMappingException(Class<?> modelClass) {
+        return new MappingException("Mapping not found for aggregate class '" + modelClass.getName() + "'!");
     }
 
     public Collection<MappingEntry> entries() {
