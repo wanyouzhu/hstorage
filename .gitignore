@@ -10,3 +10,8 @@ build
 .vscode
 .project
 .settings
+
+# Ignore IDEA specific files
+.iml
+.ipr
+.iws
