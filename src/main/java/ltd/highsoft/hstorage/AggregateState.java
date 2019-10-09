@@ -1,6 +1,6 @@
 package ltd.highsoft.hstorage;
 
-import io.micrometer.core.instrument.util.StringUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 
@@ -27,19 +27,19 @@ public class AggregateState {
     }
 
     private void validateCollection() {
-        if (StringUtils.isBlank(collection)) {
+        if (StringUtils.isEmpty(collection)) {
             throw new MalformedDataException("Aggregate collection is missing!");
         }
     }
 
     private void validateId() {
-        if (StringUtils.isBlank(id)) {
+        if (StringUtils.isEmpty(id)) {
             throw new MalformedDataException("Aggregate ID is missing!");
         }
     }
 
     private void validateState() {
-        if (StringUtils.isBlank(state)) {
+        if (StringUtils.isEmpty(state)) {
             throw new MalformedDataException("Aggregate state is missing!");
         }
     }

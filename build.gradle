@@ -1,12 +1,11 @@
 plugins {
-    id 'org.springframework.boot' version '2.1.8.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java-library'
 }
 
 apply plugin: 'idea'
 apply plugin: 'java'
 
-group = 'ltd.highsoft.hkeeper'
+group = 'ltd.highsoft'
 version = '1.0'
 
 tasks.withType(JavaCompile) {
@@ -21,36 +20,34 @@ repositories {
     maven { url "http://repo.maven.apache.org/maven2" }
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+ext {
+    // Production dependency versions
+    guavaVersion = '28.1-jre'
+    jacksonVersion = '2.9.9'
+    springFrameworkVersion = '5.1.9.RELEASE'
+    postgresVersion = '42.2.6'
+
+    // Test dependency versions
+    junitVersion = '5.3.2'
+    assertJVersion = '3.11.1'
+    mockitoVersion = '2.23.4'
 }
 
 dependencies {
-    // Common dependencies.
-    implementation 'com.google.guava:guava:28.1-jre'
-
-    // Web dependencies.
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // Persistence dependencies.
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    runtimeOnly 'org.postgresql:postgresql'
-
-    // Operation dependencies.
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Production dependencies.
+    api "com.google.guava:guava:$guavaVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-parameter-names:$jacksonVersion"
+    api "org.springframework:spring-context:$springFrameworkVersion"
+    api "org.springframework:spring-jdbc:$springFrameworkVersion"
+    runtimeOnly "org.postgresql:postgresql:$postgresVersion"
 
     // Test dependencies.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.hamcrest'
-        exclude group: 'junit'
-    }
-
-    // Other dependencies
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertJVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 
