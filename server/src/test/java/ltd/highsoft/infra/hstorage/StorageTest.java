@@ -1,6 +1,5 @@
 package ltd.highsoft.infra.hstorage;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +21,13 @@ class StorageTest {
         testDatabase = new TestDatabase();
         testDatabase.recreateCollectionTable(COLLECTION);
         timeService = new FixedTimeService(Instant.now());
-        ModelMapping mapping = new ModelMapping(ImmutableList.of(new MappingEntry(TestAggregateMapping.class)));
-        storage = new Storage(mapping, new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
+        storage = new Storage(configureMapping(), new JdbcStatePersister(testDatabase.jdbcTemplate()), timeService);
+    }
+
+    private ModelMapping configureMapping() {
+        MappingConfigurer mappingConfigurer = new MappingConfigurer();
+        mappingConfigurer.addMappingClass(TestAggregateMapping.class);
+        return mappingConfigurer.configure();
     }
 
     @Test
