@@ -22,9 +22,20 @@ public class ClassPathMappingResolver {
     }
 
     public List<Class<?>> resolve(String basePackage) {
+        return loadingMappingClasses(findAllMappingClasses(basePackage));
+    }
+
+    private Set<BeanDefinition> findAllMappingClasses(String basePackage) {
+        return createProvider().findCandidateComponents(basePackage);
+    }
+
+    private ClassPathScanningCandidateComponentProvider createProvider() {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
         provider.addIncludeFilter(new AnnotationTypeFilter(Mapping.class));
-        Set<BeanDefinition> definitions = provider.findCandidateComponents(basePackage);
+        return provider;
+    }
+
+    private List<Class<?>> loadingMappingClasses(Set<BeanDefinition> definitions) {
         return definitions.stream().map(this::loadMappingClass).collect(toList());
     }
 
