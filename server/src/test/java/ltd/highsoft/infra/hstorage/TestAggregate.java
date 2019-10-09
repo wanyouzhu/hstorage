@@ -1,6 +1,7 @@
 package ltd.highsoft.infra.hstorage;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
+public
 class TestAggregate {
 
     private String id;
