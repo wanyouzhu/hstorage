@@ -1,3 +1,1 @@
-rootProject.name = 'hkeeper'
-
-include 'server'
+rootProject.name = 'hstorage'
