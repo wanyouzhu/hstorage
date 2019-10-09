@@ -26,7 +26,7 @@ class StorageTest {
 
     private ModelMapping configureMapping() {
         MappingConfigurer mappingConfigurer = new MappingConfigurer();
-        mappingConfigurer.addMappingClass(TestAggregateMapping.class);
+        mappingConfigurer.addPackage("ltd.highsoft.infra.hstorage.test");
         return mappingConfigurer.configure();
     }
 
